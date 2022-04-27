@@ -57,8 +57,7 @@ class MainHomeState extends State<MainHome> {
               onPrimary: Colors.white,
             ),
             onPressed: () async {
-              final functions = FirebaseFunctions.instance;
-              final callable = functions.httpsCallable('helloWorld');
+              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('helloWorld');
               final results = await callable();
               // test
               print('sucess');

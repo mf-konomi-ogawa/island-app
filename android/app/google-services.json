@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "229244289320",
+    "firebase_url": "https://island-develop-default-rtdb.firebaseio.com",
+    "project_id": "island-develop",
+    "storage_bucket": "island-develop.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229244289320:android:2934c96715d6a26d2d501d",
+        "android_client_info": {
+          "package_name": "com.example.todoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBgu_LMXSQWYUVefk5DUaGFM73yJMUzFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229244289320:android:2384f20d34ee72c22d501d",
+        "android_client_info": {
+          "package_name": "com.example.untitled1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBgu_LMXSQWYUVefk5DUaGFM73yJMUzFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229244289320:android:5415b4b2e07679972d501d",
+        "android_client_info": {
+          "package_name": "com.island.island"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBgu_LMXSQWYUVefk5DUaGFM73yJMUzFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229244289320:android:c2a132d7fdb6ead92d501d",
+        "android_client_info": {
+          "package_name": "com.island_develop.apikicker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBgu_LMXSQWYUVefk5DUaGFM73yJMUzFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
