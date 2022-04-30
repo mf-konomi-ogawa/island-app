@@ -17,6 +17,8 @@ class MainHome extends StatefulWidget {
 }
 
 class MainHomeState extends State<MainHome> {
+  String tweetlist = "";
+  String tweetcontents = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,20 +51,55 @@ class MainHomeState extends State<MainHome> {
             child: Text('ログインユーザー：${widget.user.email}'),
           ),
           SizedBox(height: 4),
-          // テスト用のボタン
+          // API テスト - usaTweetTest
           ElevatedButton(
-            child: const Text('helloWorld'),
+            child: const Text('usaTweetTest'),
             style: ElevatedButton.styleFrom(
               primary: Colors.orange,
               onPrimary: Colors.white,
             ),
             onPressed: () async {
-              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('helloWorld');
+              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetTest');
               final results = await callable();
-              // test
               print('sucess');
+              print( results.data.toString() );
+              tweetlist = results.data.toString();
             },
           ),
+          SizedBox(height: 4),
+          Text( 'tweetlist' ),
+          SizedBox(height: 16),
+          // API テスト - usaTweetAdd - Tweet 内容入力フォーム
+          TextFormField(
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+                labelText: "ツイート本文",
+            ),
+            onChanged: (String value) {
+              setState(() {
+                tweetcontents = value;
+              });
+            },
+          ),
+          SizedBox(height: 8),
+          // API テスト - usaTweetAdd
+          ElevatedButton(
+            child: const Text('usaTweetAdd'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.orange,
+              onPrimary: Colors.white,
+            ),
+            onPressed: () async {
+              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetAdd');
+              final results = await callable( tweetcontents );
+              // test
+              print('sucess');
+              print( results.data.toString() );
+              print( tweetcontents );
+            },
+          ),
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Image.asset('images/logo_island_transparent_small.png'),
