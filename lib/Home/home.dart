@@ -19,6 +19,7 @@ class MainHome extends StatefulWidget {
 class MainHomeState extends State<MainHome> {
   String tweetlist = "";
   String tweetcontents = "";
+  String deletePersonalActivityId = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,6 +98,36 @@ class MainHomeState extends State<MainHome> {
               print('sucess');
               print( results.data.toString() );
               print( tweetcontents );
+            },
+          ),
+          SizedBox(height: 8),
+          // API テスト - deletePersonalActivity - PersonalActivityId 内容入力フォーム
+          TextFormField(
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(
+              labelText: "PersonalActivityId を入力",
+            ),
+            onChanged: (String value) {
+              setState(() {
+                deletePersonalActivityId = value;
+              });
+            },
+          ),
+          SizedBox(height: 8),
+          // API テスト - deletePersonalActivity
+          ElevatedButton(
+            child: const Text('deletePersonalActivity'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.orange,
+              onPrimary: Colors.white,
+            ),
+            onPressed: () async {
+              HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deletePersonalActivity');
+              final results = await callable(deletePersonalActivityId);
+              // test
+              print('sucess');
+              print( results.data.toString() );
+              print( deletePersonalActivityId );
             },
           ),
 
