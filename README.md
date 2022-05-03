@@ -1,16 +1,14 @@
-# apikicker
+# island API Kicker
 
-API の動作確認用プロジェクト
+アプリから API の動作確認を行うためのプロジェクトです。
 
-## Getting Started
+## 使い方
 
-This project is a starting point for a Flutter application.
+まずは API Kicker にログインするためのアカウントを、Firebase authentication に登録してください。
+以下の Firebase コンソールからユーザを追加すれば OK です。
+https://console.firebase.google.com/u/1/project/island-develop/authentication/users
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+API Kicker を clone したら、IDE から Web / スマホエミュレータのどちらかで起動します。
+(どちらでも大丈夫ですが Web の方がビルド時間が少なく、スマホエミュレータの起動も省けるので、起動確認をするだけなら Web 版をお勧めします。)
+ログイン画面が表示されるので、Firebase authentication に登録したアカウントでログインします。
+ホーム画面に遷移したら、現在実装されている API をコールする画面が表示されます。
