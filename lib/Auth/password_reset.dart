@@ -31,7 +31,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
                     // "pop"で前の画面に戻る
                     Navigator.of(context).pop();
                   },
-                  child: Text('パスワードを忘れた'),
+                  child: Text('ログイン画面に戻る'),
                 ),
               ),
               Container(

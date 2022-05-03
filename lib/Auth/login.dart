@@ -20,13 +20,18 @@ class _LoginForm extends State<LoginFormAuth> {
   String newUserEmail = "";
   // 入力されたパスワード
   String newUserPassword = "";
+  // パスワード入力フォームでエンターキー押下でログインを実行するように
+  final _loginFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: <Widget>[
         TextFormField(
           decoration: InputDecoration(labelText: "メールアドレス"),
+          textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
+          autofocus: true, // 画面開いた際に自動でフォーカスするように設定
           onChanged: (String value) {
             setState(() {
               newUserEmail = value;
@@ -40,6 +45,10 @@ class _LoginForm extends State<LoginFormAuth> {
             setState(() {
               newUserPassword = value;
             });
+          },
+          onFieldSubmitted: (_) {
+            //エンターキーを押した時の処理
+            FocusScope.of(context).requestFocus(_loginFocusNode);
           },
         ),
         SizedBox(height: 4),
@@ -72,6 +81,7 @@ class _LoginForm extends State<LoginFormAuth> {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
+            focusNode: _loginFocusNode,
             onPressed: () async {
               // ログイン
               final FirebaseAuthResultStatus result = await signInEmail(
