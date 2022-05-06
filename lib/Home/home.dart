@@ -2,15 +2,11 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Auth/login.dart';
+import 'dart:developer' as developer;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// リスト一覧画面用Widget
 class MainHome extends StatefulWidget {
-  // 引数からユーザー情報を受け取れるようにする
-  MainHome(this.user);
-
-  //ユーザー情報
-  final User user;
+  MainHome(this.user); // 引数からユーザー情報を受け取れるようにする
+  final User user; // ユーザー情報
 
   @override
   MainHomeState createState() => MainHomeState();
@@ -20,7 +16,7 @@ class MainHomeState extends State<MainHome> {
   String tweetlist = ""; // ツイート一覧取得用
   String tweetcontents = ""; // ツイート投稿用
   String deletePersonalActivityId = ""; // ツイート削除用
-  String getUsersAllLimit = ""; // ユーザー取得テスト
+  String getUsersAllLimit = ""; // ユーザー取得テスト用
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +75,13 @@ class MainHomeState extends State<MainHome> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () async {
-                  print('[START]「ツイート投稿」を開始します。');
+                  developer.log( "[START]「ツイート投稿」を開始します。", name: "dev.logging" );
                   HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetAdd');
                   final results = await callable( tweetcontents );
                   // test
-                  print('「ツイート投稿」に成功しました。');
-                  print( results.data.toString() );
-                  print( tweetcontents );
-                  print('[END]「ツイート投稿」を終了します。');
+                  developer.log( "「ツイート投稿」に成功しました。", name: "dev.logging" );
+                  developer.log( "変数 tweetcontents = ${tweetcontents}", name: "dev.logging" );
+                  developer.log( "[END]「ツイート投稿」を終了します。", name: "dev.logging" );
                 },
               ),
             ),
@@ -115,14 +110,13 @@ class MainHomeState extends State<MainHome> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () async {
-                  print('[START]「ツイート削除」を開始します。');
+                  developer.log( "[START]「ツイート削除」を開始します。", name: "dev.logging" );
                   HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deletePersonalActivity');
                   final results = await callable(deletePersonalActivityId);
                   // test
-                  print('「ツイート削除」に成功しました。');
-                  print( results.data.toString() );
-                  print( deletePersonalActivityId );
-                  print('[END]「ツイート削除」を開始します。');
+                  developer.log( "削除レスポンス = ${results.data.toString()}" , name: "dev.logging" );
+                  developer.log( "「ツイート削除」に成功しました。", name: "dev.logging" );
+                  developer.log( "[END]「ツイート削除」を終了します。", name: "dev.logging" );
                 },
               ),
             ),
@@ -142,15 +136,15 @@ class MainHomeState extends State<MainHome> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () async {
-                  print('[START]「ツイート取得テスト」を開始します。');
+                  developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
                   HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetTest');
                   final results = await callable();
-                  print('「ツイート取得テスト」の実行に成功しました。');
-                  print( results.data.toString() );
                   setState(() {
                     tweetlist = results.data.toString();
+                    developer.log( "変数 tweetlist = ${tweetlist}", name: "dev.logging" );
                   });
-                  print('[END]「ツイート取得テスト」を終了します。');
+                  developer.log( "「ツイート取得テスト」の実行に成功しました。", name: "dev.logging" );
+                  developer.log( "[END]「ツイート取得テスト」を終了します。", name: "dev.logging" );
                 },
               ),
             ),
@@ -175,15 +169,15 @@ class MainHomeState extends State<MainHome> {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () async {
-                  print('[START]「getUsersAllLimit」を開始します。');
+                  developer.log( "[START]「getUsersAllLimit」を開始します。", name: "dev.logging" );
                   HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getUsersAllLimit');
                   final results = await callable();
-                  print('「getUsersAllLimit」の実行に成功しました。');
-                  print( results.data.toString() );
                   setState(() {
                     getUsersAllLimit = results.data.toString();
+                    developer.log( "変数 getUsersAllLimit = ${getUsersAllLimit}", name: "dev.logging" );
                   });
-                  print('[END]「getUsersAllLimit」を終了します。');
+                  developer.log( "「getUsersAllLimit」の実行に成功しました。", name: "dev.logging" );
+                  developer.log( "[END]「getUsersAllLimit」を終了します。", name: "dev.logging" );
                 },
               ),
             ),
