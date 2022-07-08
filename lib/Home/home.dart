@@ -23,7 +23,7 @@ class MainHomeState extends State<MainHome> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('island API Kicker'),
+        title: SelectableText('island API Kicker'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout),
@@ -47,7 +47,7 @@ class MainHomeState extends State<MainHome> {
             Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(8),
-              child: Text('ログインユーザー：${widget.user.email}'),
+              child: SelectableText('ログインユーザー：${widget.user.email}'),
             ),
             SizedBox(height: 4),
             // API テスト - usaTweetAdd - Tweet 内容入力フォーム
@@ -151,7 +151,7 @@ class MainHomeState extends State<MainHome> {
             SizedBox(height: 4),
             Container(
               alignment: Alignment.centerLeft,
-              child: Text( 'ツイート取得テスト結果：\n${tweetlist}' ),
+              child: SelectableText( 'ツイート取得テスト結果：\n${tweetlist}' ),
             ),
             SizedBox(height: 4),
 
@@ -184,7 +184,7 @@ class MainHomeState extends State<MainHome> {
             SizedBox(height: 4),
             Container(
               alignment: Alignment.centerLeft,
-              child : Text( 'getUsersAllLimit結果：\n${getUsersAllLimit}' ),
+              child : SelectableText( 'getUsersAllLimit結果：\n${getUsersAllLimit}' ),
             ),
             SizedBox(height: 4),
 
