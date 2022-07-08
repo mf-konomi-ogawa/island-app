@@ -29,6 +29,7 @@ class _LoginForm extends State<LoginFormAuth> {
     return Column(
       children: <Widget>[
         TextFormField(
+          controller: TextEditingController( text: "ryo_usagawa@mforce.co.jp" ), // デバッグ用初期値
           decoration: InputDecoration(labelText: "メールアドレス"),
           textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
           autofocus: true, // 画面開いた際に自動でフォーカスするように設定

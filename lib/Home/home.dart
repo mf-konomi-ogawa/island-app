@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Auth/login.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 
 class MainHome extends StatefulWidget {
@@ -82,6 +83,18 @@ class MainHomeState extends State<MainHome> {
                   developer.log( "「ツイート投稿」に成功しました。", name: "dev.logging" );
                   developer.log( "変数 tweetcontents = ${tweetcontents}", name: "dev.logging" );
                   developer.log( "[END]「ツイート投稿」を終了します。", name: "dev.logging" );
+                  Flushbar(
+                      title : "ツイート投稿" ,
+                      message : "ツイートを投稿しました。" ,
+                      backgroundColor: Colors.blueAccent,
+                      margin: EdgeInsets.all(8),
+                      borderRadius: BorderRadius.circular(8),
+                      duration:  Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      )
+                  )..show(context);
                 },
               ),
             ),
@@ -117,6 +130,18 @@ class MainHomeState extends State<MainHome> {
                   developer.log( "削除レスポンス = ${results.data.toString()}" , name: "dev.logging" );
                   developer.log( "「ツイート削除」に成功しました。", name: "dev.logging" );
                   developer.log( "[END]「ツイート削除」を終了します。", name: "dev.logging" );
+                  Flushbar(
+                      title : "ツイート削除" ,
+                      message : "ツイートを削除しました。" ,
+                      backgroundColor: Colors.blueAccent,
+                      margin: EdgeInsets.all(8),
+                      borderRadius: BorderRadius.circular(8),
+                      duration:  Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      )
+                  )..show(context);
                 },
               ),
             ),
@@ -145,6 +170,18 @@ class MainHomeState extends State<MainHome> {
                   });
                   developer.log( "「ツイート取得テスト」の実行に成功しました。", name: "dev.logging" );
                   developer.log( "[END]「ツイート取得テスト」を終了します。", name: "dev.logging" );
+                  Flushbar(
+                      title : "ツイート取得" ,
+                      message : "ツイートを取得しました。" ,
+                      backgroundColor: Colors.blueAccent,
+                      margin: EdgeInsets.all(8),
+                      borderRadius: BorderRadius.circular(8),
+                      duration:  Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      )
+                  )..show(context);
                 },
               ),
             ),
@@ -178,6 +215,18 @@ class MainHomeState extends State<MainHome> {
                   });
                   developer.log( "「getUsersAllLimit」の実行に成功しました。", name: "dev.logging" );
                   developer.log( "[END]「getUsersAllLimit」を終了します。", name: "dev.logging" );
+                  Flushbar(
+                      title : "ツイート取得" ,
+                      message : "getUsersAllLimit を実行しました。" ,
+                      backgroundColor: Colors.blueAccent,
+                      margin: EdgeInsets.all(8),
+                      borderRadius: BorderRadius.circular(8),
+                      duration:  Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      )
+                  )..show(context);
                 },
               ),
             ),
