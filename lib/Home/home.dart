@@ -240,13 +240,6 @@ class MainHomeState extends State<MainHome> {
             SizedBox(height: 8),
             Divider(color: Colors.black38, height: 12, indent: 4, endIndent: 4),
             SizedBox(height: 8),
-
-            SizedBox(height: 128),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Image.asset('images/logo_island_not-transparent.png'),
-            ),
-            SizedBox(height: 12),
           ],
         ),
       ),
