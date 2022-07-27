@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Auth/login.dart';
+import 'package:apikicker/Home/timeline.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 
@@ -15,6 +16,7 @@ class MainHome extends StatefulWidget {
 
 class MainHomeState extends State<MainHome> {
   String tweetlist = ""; // ツイート一覧取得用
+  String tweetlistAllGet = ""; // ツイート一覧取得用
   String tweetcontents = ""; // ツイート投稿用
   String deletePersonalActivityId = ""; // ツイート削除用
   String getUsersAllLimit = ""; // ユーザー取得テスト用
@@ -51,6 +53,28 @@ class MainHomeState extends State<MainHome> {
               child: SelectableText('ログインユーザー：${widget.user.email}'),
             ),
             SizedBox(height: 4),
+            // デバッグ用ページ切り替え
+            Container(
+              alignment: Alignment.centerLeft,
+              child: ElevatedButton(
+                child: const Text('タイムライン画面へ'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  onPrimary: Colors.white,
+                ),
+                onPressed: () async {
+                  // タイムライン画面に遷移＋ログイン画面を破棄
+                  await Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) {
+                      final FirebaseAuth auth = FirebaseAuth.instance;
+                      final User user = auth.currentUser!;
+                      return TimelineListScreen(user);
+                    }),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 8),
             // API テスト - usaTweetAdd - Tweet 内容入力フォーム
             Container(
               alignment: Alignment.centerLeft,
@@ -66,7 +90,7 @@ class MainHomeState extends State<MainHome> {
               ),
             ),
             SizedBox(height: 8),
-            // API テスト - usaTweetAdd
+            // API テスト - pocTweetAdd
             Container(
               alignment: Alignment.centerLeft,
               child: ElevatedButton(
@@ -77,7 +101,7 @@ class MainHomeState extends State<MainHome> {
                 ),
                 onPressed: () async {
                   developer.log( "[START]「ツイート投稿」を開始します。", name: "dev.logging" );
-                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetAdd');
+                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetAdd');
                   final results = await callable( tweetcontents );
                   // test
                   developer.log( "「ツイート投稿」に成功しました。", name: "dev.logging" );
@@ -113,7 +137,7 @@ class MainHomeState extends State<MainHome> {
               ),
             ),
             SizedBox(height: 8),
-            // API テスト - deletePersonalActivity
+            // API テスト - pocDeletePersonalActivity
             Container(
               alignment: Alignment.centerLeft,
               child: ElevatedButton(
@@ -124,7 +148,7 @@ class MainHomeState extends State<MainHome> {
                 ),
                 onPressed: () async {
                   developer.log( "[START]「ツイート削除」を開始します。", name: "dev.logging" );
-                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deletePersonalActivity');
+                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
                   final results = await callable(deletePersonalActivityId);
                   // test
                   developer.log( "削除レスポンス = ${results.data.toString()}" , name: "dev.logging" );
@@ -151,7 +175,7 @@ class MainHomeState extends State<MainHome> {
             Divider(color: Colors.black38, height: 12, indent: 4, endIndent: 4),
             SizedBox(height: 8),
 
-            // API テスト - usaTweetTest
+            // API テスト - pocTweetTest
             Container(
               alignment: Alignment.centerLeft,
               child: ElevatedButton(
@@ -162,7 +186,7 @@ class MainHomeState extends State<MainHome> {
                 ),
                 onPressed: () async {
                   developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
-                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetTest');
+                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTest');
                   final results = await callable();
                   setState(() {
                     tweetlist = results.data.toString();
@@ -196,28 +220,28 @@ class MainHomeState extends State<MainHome> {
             Divider(color: Colors.black38, height: 12, indent: 4, endIndent: 4),
             SizedBox(height: 8),
 
-            // API テスト - getUsersAllLimit
+            // API テスト - pocTweetTestAllGet
             Container(
               alignment: Alignment.centerLeft,
               child: ElevatedButton(
-                child: const Text('getUsersAllLimit'),
+                child: const Text('ツイート取得テスト(AllGet)'),
                 style: ElevatedButton.styleFrom(
                   primary: Colors.orange,
                   onPrimary: Colors.white,
                 ),
                 onPressed: () async {
-                  developer.log( "[START]「getUsersAllLimit」を開始します。", name: "dev.logging" );
-                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getUsersAllLimit');
+                  developer.log( "[START]「ツイート取得テスト All Get」を開始します。", name: "dev.logging" );
+                  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
                   final results = await callable();
                   setState(() {
-                    getUsersAllLimit = results.data.toString();
-                    developer.log( "変数 getUsersAllLimit = ${getUsersAllLimit}", name: "dev.logging" );
+                    tweetlistAllGet = results.data.toString();
+                    developer.log( "変数 tweetlistAllGet = ${tweetlistAllGet}", name: "dev.logging" );
                   });
-                  developer.log( "「getUsersAllLimit」の実行に成功しました。", name: "dev.logging" );
-                  developer.log( "[END]「getUsersAllLimit」を終了します。", name: "dev.logging" );
+                  developer.log( "「ツイート取得テスト AlL Get」の実行に成功しました。", name: "dev.logging" );
+                  developer.log( "[END]「ツイート取得テスト All Get」を終了します。", name: "dev.logging" );
                   Flushbar(
-                      title : "ツイート取得" ,
-                      message : "getUsersAllLimit を実行しました。" ,
+                      title : "ツイート取得 All Get" ,
+                      message : "ツイートを取得しました。" ,
                       backgroundColor: Colors.blueAccent,
                       margin: EdgeInsets.all(8),
                       borderRadius: BorderRadius.circular(8),
@@ -233,7 +257,7 @@ class MainHomeState extends State<MainHome> {
             SizedBox(height: 4),
             Container(
               alignment: Alignment.centerLeft,
-              child : SelectableText( 'getUsersAllLimit結果：\n${getUsersAllLimit}' ),
+              child: SelectableText( 'ツイート取得テスト結果：\n${tweetlistAllGet}' ),
             ),
             SizedBox(height: 4),
 

@@ -7,7 +7,16 @@ import 'package:apikicker/Auth/login.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Firebase 初期化
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options : FirebaseOptions(
+      apiKey: "AIzaSyBu6veShb20Y9sBv3LysUBE9O0Fp7R33R4",
+      appId: "1:229244289320:web:2235e6cb1bf6fe032d501d",
+      messagingSenderId: "229244289320",
+      projectId: "island-develop",
+      authDomain: "island-develop.firebaseapp.com",
+      storageBucket: "island-develop.appspot.com",
+    )
+  );
   runApp(MyApp());
 }
 
