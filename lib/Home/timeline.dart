@@ -85,7 +85,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
 
   Future<void> _load() async{
     developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('usaTweetTest');
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTest');
     final results = await callable();
     setState(() {
       timelineData = results.data.toString();
@@ -158,6 +158,13 @@ class TimelineListScreenState extends State<TimelineListScreen> {
             'images/mori.png',
             timelineData,
           )
+        ),
+        GestureDetector(
+            child: _menuItem(
+              "UserName",
+              'images/mori.png',
+              timelineData,
+            )
         ),
       ],
     );

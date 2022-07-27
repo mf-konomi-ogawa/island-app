@@ -44,7 +44,7 @@ class MainHomeState extends State<MainHome> {
         ],
       ),
 
-      body: Align(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Container(
