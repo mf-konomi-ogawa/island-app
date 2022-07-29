@@ -2,25 +2,12 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Auth/login.dart';
+import 'package:apikicker/Common/color_settings.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 import 'package:like_button/like_button.dart';
 import 'dart:collection';
-
-const Color footerColor = Color(0xFF292929); /*フッターの色(一番濃い灰色)*/
-const Color backColor = Color(0xFF303237); /*暗い背景色*/
-const Color back2Color = Color(0xFF36393F); /*背景より気持ち明るい灰*/
-const Color lineColor = Color(0xFF45484E); /*投稿を区切る線の色(背景より明るい灰)*/
-const Color textColor = Color(0xFFDCDDDE); /*テキストの色(白)*/
-const Color accentColor = Color(0xFF62CDFF); /*アクセントカラー(差し色)*/
-const LinearGradient gColor = LinearGradient(
-  colors: [
-    Color(0xff5319bf),
-    Color(0xff19cdff),
-    Color(0xffff40b3),
-    Color(0xffffe3bc),
-  ],
-); /*アクセントカラー(差し色)*/
+import 'dart:convert';
 
 class TimeLineHeader extends StatelessWidget {
   const TimeLineHeader({Key? key}) : super(key: key);
@@ -74,8 +61,8 @@ class TimelineListScreen extends StatefulWidget {
 }
 
 class TimelineListScreenState extends State<TimelineListScreen> {
-  String timelineData = "";
-  LinkedHashMap tweets = LinkedHashMap();
+  String debug_timelineData = "";
+  List<dynamic> tweetContentslist = [];
 
   @override
   void initState() {
@@ -85,16 +72,17 @@ class TimelineListScreenState extends State<TimelineListScreen> {
 
   Future<void> _load() async{
     developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTest');
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
     final results = await callable();
     setState(() {
-      timelineData = results.data.toString();
-      tweets[0] = {
-         results.data['usa'],
-      };
+      debug_timelineData = results.data.toString();
+      developer.log( "変数 timelineData = ${debug_timelineData}", name: "dev.logging" );
+
+      tweetContentslist = results.data;
+      developer.log( "変数 list.length = ${tweetContentslist[1]['contents']}", name: "dev.logging" );
+      //List<dynamic> body = jsonDecode(results.data);
+      //List<PersonalActivity> pa = body.map((dynamic personalActivity) => PersonalActivity.fromJson(personalActivity)).toList();
     });
-    developer.log( "変数 timelineData = ${timelineData}", name: "dev.logging" );
-    developer.log( "変数 tweets = ${tweets[0]}", name: "dev.logging" );
     developer.log( "「ツイート取得テスト」の実行に成功しました。", name: "dev.logging" );
     developer.log( "[END]「ツイート取得テスト」を終了します。", name: "dev.logging" );
   }
@@ -156,15 +144,43 @@ class TimelineListScreenState extends State<TimelineListScreen> {
           child: _menuItem(
             "UserName",
             'images/mori.png',
-            timelineData,
-          )
+            tweetContentslist[0]['contents'],
+          ),
         ),
         GestureDetector(
-            child: _menuItem(
-              "UserName",
-              'images/mori.png',
-              timelineData,
-            )
+          child: _menuItem(
+            "UserName",
+            'images/mori.png',
+            tweetContentslist[1]['contents'],
+          ),
+        ),
+        GestureDetector(
+          child: _menuItem(
+            "UserName",
+            'images/mori.png',
+            tweetContentslist[2]['contents'],
+          ),
+        ),
+        GestureDetector(
+          child: _menuItem(
+            "UserName",
+            'images/mori.png',
+            tweetContentslist[3]['contents'],
+          ),
+        ),
+        GestureDetector(
+          child: _menuItem(
+            "UserName",
+            'images/mori.png',
+            tweetContentslist[4]['contents'],
+          ),
+        ),
+        GestureDetector(
+          child: _menuItem(
+            "UserName",
+            'images/mori.png',
+            tweetContentslist[5]['contents'],
+          ),
         ),
       ],
     );
@@ -491,12 +507,6 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                                 ),
                               ),
                             ]),
-
-                        // Container(
-                        //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-                        //   child:
-                        //       const Icon(Icons.favorite, color: accentColor), /*リアクションボタン。改良予定*/
-                        // ),
                       ]),
                 ],
               ),

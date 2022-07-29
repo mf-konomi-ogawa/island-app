@@ -188,8 +188,10 @@ class MainHomeState extends State<MainHome> {
                   developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
                   HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTest');
                   final results = await callable();
+                  Map<String, dynamic> map = results.data;
                   setState(() {
                     tweetlist = results.data.toString();
+                    developer.log( "変数 results.data = ${map['usa']}", name: "dev.logging" );
                     developer.log( "変数 tweetlist = ${tweetlist}", name: "dev.logging" );
                   });
                   developer.log( "「ツイート取得テスト」の実行に成功しました。", name: "dev.logging" );
