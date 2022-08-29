@@ -22,6 +22,7 @@ dependencies:
   another_flushbar: ^1.10.29
 
   like_button: ^2.0.4
+  provider: ^6.0.3
 
 dev_dependencies:
   flutter_test:

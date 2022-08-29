@@ -14,3 +14,18 @@ const LinearGradient gColor = LinearGradient(
     Color(0xffffe3bc),
   ],
 ); /*アクセントカラー(差し色)*/
+
+//投稿ボタン
+const BoxDecoration gradationBox = BoxDecoration(
+  shape: BoxShape.circle,
+  gradient: LinearGradient(
+    begin: FractionalOffset.topLeft,
+    end: FractionalOffset.bottomRight,
+    colors: [
+      Color(0xff5319bf),
+      Color(0xff19cdff),
+      Color(0xffff40b3),
+      Color(0xffffe3bc),
+    ],
+  ),
+);
