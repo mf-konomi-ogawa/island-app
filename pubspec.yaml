@@ -14,10 +14,10 @@ dependencies:
 
   cupertino_icons: ^1.0.4
 
-  firebase_core: ^1.19.1
-  firebase_auth: ^3.4.1
-  cloud_firestore: ^3.2.1
-  cloud_functions: ^3.3.1
+  firebase_core: ^1.21.1
+  firebase_auth: ^3.7.0
+  cloud_firestore: ^3.4.6
+  cloud_functions: ^3.3.6
 
   another_flushbar: ^1.10.29
 

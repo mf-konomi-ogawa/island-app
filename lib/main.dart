@@ -2,21 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:apikicker/Auth/login.dart';
+import 'firebase_options.dart';
 
 /* プログラム開始点 */
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Firebase 初期化
   await Firebase.initializeApp(
-    name : 'island-develop API Kicker',
-    options : FirebaseOptions(
-      apiKey: "AIzaSyBu6veShb20Y9sBv3LysUBE9O0Fp7R33R4",
-      appId: "1:229244289320:web:2235e6cb1bf6fe032d501d",
-      messagingSenderId: "229244289320",
-      projectId: "island-develop",
-      authDomain: "island-develop.firebaseapp.com",
-      storageBucket: "island-develop.appspot.com",
-    )
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
 }

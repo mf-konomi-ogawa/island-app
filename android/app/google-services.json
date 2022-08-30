@@ -30,6 +30,13 @@
             {
               "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.apikicker"
+              }
             }
           ]
         }
@@ -59,6 +66,13 @@
             {
               "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.apikicker"
+              }
             }
           ]
         }
@@ -88,6 +102,13 @@
             {
               "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.apikicker"
+              }
             }
           ]
         }
@@ -117,6 +138,13 @@
             {
               "client_id": "229244289320-is5p0h4m0e04a8cjpnhlj6vm4je66q5u.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.apikicker"
+              }
             }
           ]
         }
