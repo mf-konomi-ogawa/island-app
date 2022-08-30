@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Firebase 初期化
   await Firebase.initializeApp(
+    name : 'island-develop API Kicker',
     options : FirebaseOptions(
       apiKey: "AIzaSyBu6veShb20Y9sBv3LysUBE9O0Fp7R33R4",
       appId: "1:229244289320:web:2235e6cb1bf6fe032d501d",
