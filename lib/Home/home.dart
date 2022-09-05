@@ -59,8 +59,8 @@ class MainHomeState extends State<MainHome> {
               child: ElevatedButton(
                 child: const Text('タイムライン画面へ'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.green,
-                  onPrimary: Colors.white,
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
                 ),
                 onPressed: () async {
                   // タイムライン画面に遷移＋ログイン画面を破棄
@@ -68,7 +68,7 @@ class MainHomeState extends State<MainHome> {
                     MaterialPageRoute(builder: (context) {
                       final FirebaseAuth auth = FirebaseAuth.instance;
                       final User user = auth.currentUser!;
-                      return TimelineListScreen(user);
+                      return TimelineListScreen(user, false);
                     }),
                   );
                 },

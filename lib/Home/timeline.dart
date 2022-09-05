@@ -1,17 +1,18 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:apikicker/Auth/login.dart';
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:apikicker/Auth/login.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 import 'package:like_button/like_button.dart';
 import 'dart:collection';
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:apikicker/Home/post_page.dart';
 
-class TimeLineHeader extends StatelessWidget {
-  const TimeLineHeader({Key? key}) : super(key: key);
+class TimelineHeader extends StatelessWidget {
+  const TimelineHeader({Key? key}) : super(key: key);
 
   get color => null;
 
@@ -24,9 +25,9 @@ class TimeLineHeader extends StatelessWidget {
         length: 2,
         /*タブの数*/
         child: Scaffold(
-          backgroundColor: backColor,
+          backgroundColor: bgColor,
           appBar: AppBar(
-            backgroundColor: backColor,
+            backgroundColor: bgColor,
             elevation: 0,
             flexibleSpace: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -53,23 +54,45 @@ class TimeLineHeader extends StatelessWidget {
   }
 }
 
+@immutable
 class TimelineListScreen extends StatefulWidget {
-  TimelineListScreen(this.user); // 引数からユーザー情報を受け取れるようにする
+  TimelineListScreen(this.user, this.hasFlushBar); // 引数からユーザー情報を受け取れるようにする
   final User user; // ユーザー情報
+  bool hasFlushBar = false;
 
   @override
   TimelineListScreenState createState() => TimelineListScreenState();
 }
 
 class TimelineListScreenState extends State<TimelineListScreen> {
-  String debug_timelineData = "";
+  String debugTimelineData = "";
   List<dynamic> tweetContentslist = [];
-  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _load();
+    if (widget.hasFlushBar) {
+      showTopFlushBar();
+    }
+    widget.hasFlushBar = false;
+  }
+
+  void showTopFlushBar() {
+      Flushbar(
+        title : "ツイート投稿" ,
+        message : "ツイートを投稿しました。" ,
+        flushbarPosition: FlushbarPosition.TOP,
+        backgroundColor: Colors.blueAccent,
+        margin: EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        duration:  Duration(seconds: 5),
+        isDismissible: true,
+        icon: Icon(
+          Icons.info_outline,
+          color: Colors.white,
+        )
+      )..show(context);
   }
 
   Future<void> _load() async{
@@ -77,8 +100,8 @@ class TimelineListScreenState extends State<TimelineListScreen> {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
     final results = await callable();
     setState(() {
-      debug_timelineData = results.data.toString();
-      developer.log( "変数 timelineData = ${debug_timelineData}", name: "dev.logging" );
+      debugTimelineData = results.data.toString();
+      developer.log( "変数 timelineData = $debugTimelineData", name: "dev.logging" );
 
       tweetContentslist = results.data;
       developer.log( "変数 list.length = ${tweetContentslist.length}", name: "dev.logging" );
@@ -92,8 +115,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backColor,
-
+      backgroundColor: bgColor,
       // タイムライン
       body: RefreshIndicator(
         onRefresh: () async{
@@ -122,7 +144,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
         onPressed: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return AddPostPage();
+              return PostPage();
             }),
           );
         },
@@ -533,198 +555,6 @@ class TimelineListScreenState extends State<TimelineListScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// 投稿画面
-class AddPostPage extends StatefulWidget {
-  AddPostPage();
-
-  @override
-  _AddPostPageState createState() => _AddPostPageState();
-}
-
-class _AddPostPageState extends State<AddPostPage> {
-  String tweetcontents = ""; // ツイート投稿用
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backColor,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          reverse: true,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  reverse: true,
-                  child: _cardItem(context),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  //カードアイテム
-  Widget _cardItem( BuildContext context ) {
-    return GestureDetector(
-      child: Card(
-        margin: const EdgeInsets.all(10),
-        color: back2Color,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20) /*角の丸み*/
-        ),
-        child: Container(
-          // alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(20, 10, 15, 2),
-          // const BoxDecoration(
-          //     // border: Border(bottom: BorderSide(width: 1, color: lineColor))
-          //     ),
-
-          //カード内のアイテム
-          child: Column(children: [
-            //キャンセルと投稿ボタン
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                /*左揃えにする*/
-                children: <Widget>[
-                  //キャンセルボタン
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'キャンセル',
-                      style: TextStyle(
-                        color: Colors.red, //文字の色を白にする
-                        fontWeight: FontWeight.bold, //文字を太字する
-                        fontSize: 12.0, //文字のサイズを調整する
-                      ),
-                    ),
-                  ),
-
-                  //投稿ボタン
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      height: 38,
-                      decoration:  BoxDecoration(
-                        // shape: BoxShape.circle,
-                        borderRadius: BorderRadius.circular(5),
-                        gradient: gColor,
-
-                      ),
-                      // padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          developer.log( "[START]「ツイート投稿」を開始します。", name: "dev.logging" );
-                          HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetAdd');
-                          final results = await callable( tweetcontents );
-                          developer.log( "「ツイート投稿」に成功しました。", name: "dev.logging" );
-                          developer.log( "変数 tweetcontents = ${tweetcontents}", name: "dev.logging" );
-                          developer.log( "[END]「ツイート投稿」を終了します。", name: "dev.logging" );
-                          Flushbar(
-                              title : "ツイート投稿" ,
-                              message : "ツイートを投稿しました。" ,
-                              backgroundColor: Colors.blueAccent,
-                              margin: EdgeInsets.all(8),
-                              borderRadius: BorderRadius.circular(8),
-                              duration:  Duration(seconds: 4),
-                              icon: Icon(
-                                Icons.info_outline,
-                                color: Colors.white,
-                              )
-                          )..show(context);
-                        },
-                        label: const Text(
-                          '投稿する',
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.bold, /*太字*/
-                          ),
-                        ),
-                        icon: const Icon(Icons.create, size: 20),
-                        style: ElevatedButton.styleFrom(primary: Colors.transparent),
-                        // style: ElevatedButton.styleFrom(
-                        //   // primary: accentColor,
-                        //   onPrimary: Colors.black,
-                        //   shape: const StadiumBorder(),
-                        //   padding: const EdgeInsets.fromLTRB(20, 10, 25, 10),
-                        // ),
-                      ),
-                    ),
-                    // ),
-                  ),
-                ]),
-
-            //ユーザーアイコンと入力
-            Row(crossAxisAlignment: CrossAxisAlignment.center,
-                /*左揃えにする*/
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 20, 10),
-                   //画像を丸型にする
-                    // child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(100),
-                    //     child: Image.asset(image,
-                    //         scale: 20,
-                    //         width: 40,
-                    //         height: 40,
-                    //         fit: BoxFit.cover)),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                    child: Text(
-                      'testname',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ]),
-
-            //入力画面
-            Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 20, 30),
-              child: TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                maxLength: 140,
-                decoration: InputDecoration(
-                  counterStyle: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "メッセージを書く",
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                onChanged: (String value) {
-                  setState(() {
-                    tweetcontents = value;
-                  });
-                },
-              ),
-            ),
-          ]),
         ),
       ),
     );
