@@ -7,8 +7,6 @@ import 'package:apikicker/Auth/login.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 import 'package:like_button/like_button.dart';
-import 'dart:collection';
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:apikicker/Home/post_page.dart';
 
@@ -55,7 +53,6 @@ class TimelineHeader extends StatelessWidget {
   }
 }
 
-@immutable
 class TimelineListScreen extends StatefulWidget {
   TimelineListScreen(this.user); // 引数からユーザー情報を受け取れるようにする
   final User user; // ユーザー情報
@@ -92,7 +89,6 @@ class TimelineListScreenState extends State<TimelineListScreen> {
   }
 
   Future<void> _load() async{
-    developer.log( "[START]「ツイート取得テスト」を開始します。", name: "dev.logging" );
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
     final results = await callable();
     setState(() {
@@ -101,11 +97,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
 
       tweetContentslist = results.data;
       developer.log( "変数 list.length = ${tweetContentslist.length}", name: "dev.logging" );
-      //List<dynamic> body = jsonDecode(results.data);
-      //List<PersonalActivity> pa = body.map((dynamic personalActivity) => PersonalActivity.fromJson(personalActivity)).toList();
     });
-    developer.log( "「ツイート取得テスト」の実行に成功しました。", name: "dev.logging" );
-    developer.log( "[END]「ツイート取得テスト」を終了します。", name: "dev.logging" );
   }
 
   @override
@@ -121,10 +113,12 @@ class TimelineListScreenState extends State<TimelineListScreen> {
           itemCount: tweetContentslist.length,
           itemBuilder: ( BuildContext context , int index ){
             return Card(
-              child: ListTile(
-                subtitle: Text( tweetContentslist[index]['contents'] ),
-                isThreeLine: true,
-              ),
+              color: bgColor,
+              child: _tweetItem(
+                "UserName",
+                'images/mori.png',
+                tweetContentslist[index]['contents'],
+              )
             );
           },
         ),
@@ -180,60 +174,10 @@ class TimelineListScreenState extends State<TimelineListScreen> {
     );
   }
 
-  ListView _timelineList(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[0]['contents'],
-          ),
-        ),
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[1]['contents'],
-          ),
-        ),
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[2]['contents'],
-          ),
-        ),
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[3]['contents'],
-          ),
-        ),
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[4]['contents'],
-          ),
-        ),
-        GestureDetector(
-          child: _menuItem(
-            "UserName",
-            'images/mori.png',
-            tweetContentslist[5]['contents'],
-          ),
-        ),
-      ],
-    );
-  }
-
-  //投稿の設定(調整部分)
-  Widget _menuItem(String title, String image, String text) {
+  // ツイートのデザイン
+  Widget _tweetItem(String title, String image, String text) {
     return GestureDetector(
       child: Container(
-        // alignment: Alignment.topLeft,
         padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
