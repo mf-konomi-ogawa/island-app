@@ -1,197 +1,372 @@
-import 'package:another_flushbar/flushbar_route.dart';
-import 'package:apikicker/Home/tweet_details.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Common/color_settings.dart';
-import 'package:apikicker/Auth/login.dart';
-import 'package:another_flushbar/flushbar.dart';
-import 'dart:developer' as developer;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:provider/provider.dart';
-import 'package:apikicker/Home/post_page.dart';
 
-class TimelineHeader extends StatelessWidget {
-  const TimelineHeader({Key? key}) : super(key: key);
+class TweetDetails extends StatelessWidget {
+  TweetDetails(this.name, this.text, this.image, {Key? key}) : super(key: key);
 
-  get color => null;
+  String name = "";
+  String text = "";
+  String image = '';
 
-  @override
-  //ホームでの共通部分の作成(ヘッダータブ)
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: DefaultTabController(
-        length: 2,
-        /*タブの数*/
-        child: Scaffold(
-          backgroundColor: bgColor,
-          appBar: AppBar(
-            backgroundColor: bgColor,
-            elevation: 0,
-            flexibleSpace: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              /*これがないとヘッダータブが上に行ってしまう*/
-              children: const <Widget>[
-                TabBar(
-                    labelColor: accentColor,
-                    /*選択されていないときの色*/
-                    unselectedLabelColor: Colors.white38,
-                    /*選択された時の色*/
-                    indicatorColor: accentColor,
-                    // indicatorColor: accentColor,
-                    /*下のボーダー*/
-                    tabs: <Widget>[
-                      Tab(text: 'タイムライン'),
-                      Tab(text: 'イベント'),
-                    ]),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TimelineListScreen extends StatefulWidget {
-  TimelineListScreen(this.user); // 引数からユーザー情報を受け取れるようにする
-  final User user; // ユーザー情報
+  // TweetDetails(this.name);
 
   @override
-  TimelineListScreenState createState() => TimelineListScreenState();
-}
-
-class TimelineListScreenState extends State<TimelineListScreen> {
-  String debugTimelineData = "";
-  List<dynamic> tweetContentslist = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  void _showTopFlushbar() {
-      Flushbar(
-        title : "ツイート投稿" ,
-        message : "ツイートを投稿しました。" ,
-        flushbarPosition: FlushbarPosition.TOP,
-        backgroundColor: Colors.blueAccent,
-        margin: EdgeInsets.all(8),
-        borderRadius: BorderRadius.circular(8),
-        duration:  Duration(seconds: 3),
-        isDismissible: true,
-        icon: Icon(
-          Icons.info_outline,
-          color: Colors.white,
-        )
-      )..show(context);
-  }
-
-  Future<void> _load() async{
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
-    final results = await callable();
-    setState(() {
-      debugTimelineData = results.data.toString();
-      developer.log( "変数 timelineData = $debugTimelineData", name: "dev.logging" );
-
-      tweetContentslist = results.data;
-      developer.log( "変数 list.length = ${tweetContentslist.length}", name: "dev.logging" );
-    });
-  }
-
-  @override
+  //タイムラインのコンテンツ部分
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      // タイムライン
-      body: RefreshIndicator(
-        onRefresh: () async{
-          await _load();
-        },
-        child : ListView.builder(
-          itemCount: tweetContentslist.length,
-          itemBuilder: ( BuildContext context , int index ){
-            return Card(
-              color: bgColor,
-              child: _tweetItem(
-                "UserName",
-                'images/mori.png',
-                tweetContentslist[index]['contents'],
-              )
-            );
-          },
+      //確認用の投稿を何パターンか作成する
+      appBar: AppBar(
+        backgroundColor: bgColor,
+        elevation: 0,
+        title: const Text(
+          '戻る',
+          style: TextStyle(fontSize: 16),
         ),
       ),
-
-      // 投稿ボタン
-      floatingActionButton : FloatingActionButton(
-        child: Container(
-          decoration: gradationBox,
-          child: const Icon(Icons.edit),
-          padding: const EdgeInsets.all(17.0),
-        ),
-        onPressed: () async {
-          final results = await Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) {
-              return PostPage();
-            }),
-          );
-          if (results != null) {
-            _load();
-            _showTopFlushbar();
-          }
-        },
-      ),
-
-      // ボトムナビゲーション
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        selectedFontSize: 0,
-        type: BottomNavigationBarType.fixed,
-        unselectedItemColor: Colors.white,
-        backgroundColor: footerColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'ホーム',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '検索',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: '通知',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'プロフィール',
+      body: Stack(
+        alignment: Alignment.bottomRight,
+        children: <Widget>[
+          ListView(
+            children: [
+              _detail(
+                  name,
+                  Image.asset(image,
+                      scale: 30, width: 50, height: 50, fit: BoxFit.cover),
+                  // const Icon(Icons.account_circle, color: Colors.white, size: 62),
+                  text),
+              _reply(
+                "User1",
+                Image.asset("images/icon_image/20220202.jpg",
+                    scale: 30, width: 50, height: 50, fit: BoxFit.cover),
+                // const Icon(Icons.account_circle, color: Colors.white, size: 62),
+                "リプ用テキストです",
+              ),
+              _reply(
+                  "User2",
+                  Image.asset("images/icon_image/20220203.jpg",
+                      scale: 30, width: 50, height: 50, fit: BoxFit.cover),
+                  // const Icon(Icons.account_circle, color: Colors.white, size: 62),
+                  "うちの猫がよく寝息を立てて寝ているのがとてもかわいいです"),
+              _reply(
+                  "User3",
+                  Image.asset("images/icon_image/20220204.jpg",
+                      scale: 30, width: 50, height: 50, fit: BoxFit.cover),
+                  // const Icon(Icons.account_circle, color: Colors.white, size: 62),
+                  "こちらでもちゃんと改行できます\nこんな感じで"),
+            ],
           ),
         ],
-        selectedItemColor: accentColor,
       ),
     );
   }
 
-  // ツイートのデザイン
-  Widget _tweetItem(String title, String image, String text) {
+  //投稿の詳細
+  Widget _detail(String title, Image image, String text) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: ((context) => TweetDetails(
-            "UserName",
-            "この文章は一つ目です。長さを確認したいので別々に分けています",
-            'images/mori.png',
-            ))
-          )
-        );
-      },
+      //コンテナの中に配置していく
       child: Container(
+        // alignment: Alignment.topLeft,
         padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
         decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(width: 1, color: lineColor))),
+
+        //（アイコン）（ユーザー名・投稿）を縦に並べる
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            /*上揃えにする*/
+            children: <Widget>[
+              Row(crossAxisAlignment: CrossAxisAlignment.center,
+                  /*左揃えにする*/
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+
+                      //画像を丸型にする。サイズ感は画像読み込むところで行う
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: image),
+                    ),
+
+                    //ユーザー名
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 21.0,
+                        ),
+                      ),
+                    ),
+
+                    // 投稿時間表示(今から数えた時間が表示される)
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                      child: const Text(
+                        '５分前',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ),
+
+                    const Spacer(),
+                    /*クリップアイコンを右端に寄せるための記述*/
+                    //クリップ(ブックマーク的立ち位置)
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      //アニメーションで変化するときの色
+                      circleColor: const CircleColor(
+                          start: Colors.pink, end: Colors.redAccent),
+                      likeBuilder: (bool isLiked) {
+                        //表示するアイコン
+                        return Icon(
+                          Icons.attach_file,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+                  ]),
+
+              //テキスト(投稿本文)
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    color: textColor,
+                    fontSize: 18.0,
+                  ),
+                ),
+              ),
+
+              //リアクションボタン
+              //like_button.dartを使用しています
+              //リアクションボタンはもう少し小さくてもいい気がします
+              Row(crossAxisAlignment: CrossAxisAlignment.start,
+                  /*左揃えにする*/
+                  children: <Widget>[
+                    //ハート
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      likeCount: 16,
+                      /*リアクションを押された数*/
+                      //カウント数字の色を変える
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        final Color color = isLiked ? accentColor : Colors.grey;
+                        Widget result;
+                        if (count == 0) {
+                          result = Text(
+                            'heart',
+                            style: TextStyle(color: color),
+                          );
+                        } else {
+                          result = Text(
+                            text,
+                            style: TextStyle(color: color),
+                          );
+                        }
+                        return result;
+                      },
+                      //アニメーションで変化するときの色
+                      circleColor: const CircleColor(
+                          start: Colors.pink, end: Colors.redAccent),
+                      likeBuilder: (bool isLiked) {
+                        //表示するアイコン
+                        return Icon(
+                          Icons.favorite,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+
+                    //星
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      likeCount: 2,
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        final Color color = isLiked ? accentColor : Colors.grey;
+                        Widget result;
+                        if (count == 0) {
+                          result = Text(
+                            'star',
+                            style: TextStyle(color: color),
+                          );
+                        } else {
+                          result = Text(
+                            text,
+                            style: TextStyle(color: color),
+                          );
+                        }
+                        return result;
+                      },
+                      circleColor: const CircleColor(
+                          start: Colors.white38, end: Colors.yellow),
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          Icons.star_rate,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+
+                    //グッド
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      likeCount: 20,
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        final Color color = isLiked ? accentColor : Colors.grey;
+                        Widget result;
+                        if (count == 0) {
+                          result = Text(
+                            'good',
+                            style: TextStyle(color: color),
+                          );
+                        } else {
+                          result = Text(
+                            text,
+                            style: TextStyle(color: color),
+                          );
+                        }
+                        return result;
+                      },
+                      circleColor: const CircleColor(
+                          start: Color(0xFFC107FF), end: Color(0xFFC107FF)),
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          Icons.thumb_up_alt,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+
+                    //微笑むように笑う
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      likeCount: 39,
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        final Color color = isLiked ? accentColor : Colors.grey;
+                        Widget result;
+                        if (count == 0) {
+                          result = Text(
+                            'smile',
+                            style: TextStyle(color: color),
+                          );
+                        } else {
+                          result = Text(
+                            text,
+                            style: TextStyle(color: color),
+                          );
+                        }
+                        return result;
+                      },
+                      circleColor: const CircleColor(
+                          start: Colors.lightBlueAccent,
+                          end: Colors.blueAccent),
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          Icons.sentiment_satisfied_alt,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+
+                    //口をあけて笑う
+                    LikeButton(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      likeCount: 8,
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        final Color color = isLiked ? accentColor : Colors.grey;
+                        Widget result;
+                        if (count == 0) {
+                          result = Text(
+                            'laughter',
+                            style: TextStyle(color: color),
+                          );
+                        } else {
+                          result = Text(
+                            text,
+                            style: TextStyle(color: color),
+                          );
+                        }
+                        return result;
+                      },
+                      circleColor: const CircleColor(
+                          start: Colors.lightGreenAccent,
+                          end: Colors.lightGreen),
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          Icons.sentiment_very_satisfied,
+                          size: 25,
+                          color: isLiked ? accentColor : Colors.grey,
+                        );
+                      },
+                    ),
+                  ]),
+
+              //コメント
+              Row(crossAxisAlignment: CrossAxisAlignment.start,
+                  /*左揃えにする*/
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 0, 10),
+                      child: const Icon(
+                        Icons.speaker_notes,
+                        size: 25,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
+                      child: const Text(
+                        'コメント',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
+                      child: const Text(
+                        '11件',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                  ]),
+            ]),
+      ),
+    );
+  }
+
+  //リプライ
+  Widget _reply(String name, Image image, String text) {
+    return GestureDetector(
+      //コンテナの中に配置していく
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
+        // alignment: Alignment.topLeft,
+        decoration: const BoxDecoration(
+            color: bgColor2,
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
         //（アイコン）（ユーザー名・投稿）を横に並べる
@@ -206,12 +381,11 @@ class TimelineListScreenState extends State<TimelineListScreen> {
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.all(4.0),
-
-                  //画像を丸型にする
+                  // 画像を丸型にする。サイズ感は画像読み込むところで行う
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: Image.asset(image,
-                        scale: 15, width: 40, height: 40, fit: BoxFit.cover),
+                    child: image,
+                    // child:
                   ),
                 ),
               ],
@@ -231,9 +405,9 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                               Container(
                                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
                                 child: Text(
-                                  title,
-                                  // style: GoogleFonts.alice(
+                                  name,
                                   style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                     fontSize: 18.0,
                                   ),
@@ -261,7 +435,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 //アニメーションで変化するときの色
                                 circleColor: const CircleColor(
-                                    start: accentColor, end: Colors.redAccent),
+                                    start: Colors.pink, end: Colors.redAccent),
                                 likeBuilder: (bool isLiked) {
                                   //表示するアイコン
                                   return Icon(
@@ -319,7 +493,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                                 },
                                 //アニメーションで変化するときの色
                                 circleColor: const CircleColor(
-                                    start: Colors.tealAccent, end: accentColor),
+                                    start: Colors.pink, end: Colors.redAccent),
                                 likeBuilder: (bool isLiked) {
                                   //表示するアイコン
                                   return Icon(
@@ -426,7 +600,8 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                                   return result;
                                 },
                                 circleColor: const CircleColor(
-                                    start: accentColor, end: Colors.blueAccent),
+                                    start: Colors.lightBlueAccent,
+                                    end: Colors.blueAccent),
                                 likeBuilder: (bool isLiked) {
                                   return Icon(
                                     Icons.sentiment_satisfied_alt,
@@ -506,6 +681,12 @@ class TimelineListScreenState extends State<TimelineListScreen> {
                                 ),
                               ),
                             ]),
+
+                        // Container(
+                        //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        //   child:
+                        //       const Icon(Icons.favorite, color: accentColor), /*リアクションボタン。改良予定*/
+                        // ),
                       ]),
                 ],
               ),
