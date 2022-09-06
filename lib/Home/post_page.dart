@@ -96,13 +96,8 @@ class _PostPageState extends State<PostPage> {
                       child: ElevatedButton.icon(
                         onPressed: () async {
                           HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetAdd');
-                          final results = await callable( tweetcontents );
-                          await Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) {
-                              final FirebaseAuth auth = FirebaseAuth.instance;
-                              final User user = auth.currentUser!;
-                              return TimelineListScreen(user, true);
-                          }));
+                          final results = await callable('tweetcontents');
+                          Navigator.of(context).pop(results);
                         },
                         label: const Text(
                           '投稿する',

@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,9 +57,8 @@ class TimelineHeader extends StatelessWidget {
 
 @immutable
 class TimelineListScreen extends StatefulWidget {
-  TimelineListScreen(this.user, this.hasFlushBar); // 引数からユーザー情報を受け取れるようにする
+  TimelineListScreen(this.user); // 引数からユーザー情報を受け取れるようにする
   final User user; // ユーザー情報
-  bool hasFlushBar = false;
 
   @override
   TimelineListScreenState createState() => TimelineListScreenState();
@@ -72,13 +72,9 @@ class TimelineListScreenState extends State<TimelineListScreen> {
   void initState() {
     super.initState();
     _load();
-    if (widget.hasFlushBar) {
-      showTopFlushBar();
-    }
-    widget.hasFlushBar = false;
   }
 
-  void showTopFlushBar() {
+  void _showTopFlushbar() {
       Flushbar(
         title : "ツイート投稿" ,
         message : "ツイートを投稿しました。" ,
@@ -86,7 +82,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
         backgroundColor: Colors.blueAccent,
         margin: EdgeInsets.all(8),
         borderRadius: BorderRadius.circular(8),
-        duration:  Duration(seconds: 5),
+        duration:  Duration(seconds: 3),
         isDismissible: true,
         icon: Icon(
           Icons.info_outline,
@@ -142,11 +138,15 @@ class TimelineListScreenState extends State<TimelineListScreen> {
           padding: const EdgeInsets.all(17.0),
         ),
         onPressed: () async {
-          await Navigator.of(context).push(
+          final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               return PostPage();
             }),
           );
+          if (results != null) {
+            _load();
+            _showTopFlushbar();
+          }
         },
       ),
 
@@ -180,7 +180,7 @@ class TimelineListScreenState extends State<TimelineListScreen> {
     );
   }
 
-  ListView _timeLineList(BuildContext context) {
+  ListView _timelineList(BuildContext context) {
     return ListView(
       children: <Widget>[
         GestureDetector(

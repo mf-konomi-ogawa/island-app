@@ -68,7 +68,7 @@ class MainHomeState extends State<MainHome> {
                     MaterialPageRoute(builder: (context) {
                       final FirebaseAuth auth = FirebaseAuth.instance;
                       final User user = auth.currentUser!;
-                      return TimelineListScreen(user, false);
+                      return TimelineListScreen(user);
                     }),
                   );
                 },
