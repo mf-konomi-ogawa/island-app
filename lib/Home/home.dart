@@ -9,7 +9,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'dart:developer' as developer;
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
-import 'package:apikicker/Home/post_page.dart';
+import 'package:apikicker/Home/tweet_form.dart';
 
 
 class Home extends StatefulWidget {
@@ -93,7 +93,7 @@ class HomeState extends State<Home> {
         onPressed: () async {
           final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return PostPage();
+              return TweetForm();
             }),
           );
           if (results != null) {

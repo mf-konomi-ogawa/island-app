@@ -6,14 +6,14 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:apikicker/Home/home.dart';
 
 
-class PostPage extends StatefulWidget {
-  PostPage();
+class TweetForm extends StatefulWidget {
+  TweetForm();
 
   @override
-  _PostPageState createState() => _PostPageState();
+  _TweetFormState createState() => _TweetFormState();
 }
 
-class _PostPageState extends State<PostPage> {
+class _TweetFormState extends State<TweetForm> {
   String tweetcontents = ""; // ツイート投稿用
 
   Widget build(BuildContext context) {
