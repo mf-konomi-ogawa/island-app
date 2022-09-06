@@ -1,6 +1,6 @@
 /*    ログイン画面    */
 import 'package:apikicker/Home/home.dart';
-import 'package:apikicker/Home/timeline.dart';
+import 'package:apikicker/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Header/header.dart';
@@ -97,7 +97,7 @@ class _LoginForm extends State<LoginFormAuth> {
                     final FirebaseAuth auth = FirebaseAuth.instance;
                     final User user = auth.currentUser!;
                     //return TimelineListScreen(user);
-                    return MainHome(user);
+                    return Home(user);
                   }),
                 );
               } else {

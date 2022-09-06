@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:apikicker/Home/timeline.dart';
+import 'package:apikicker/Home/home.dart';
 
 
 class PostPage extends StatefulWidget {
