@@ -10,6 +10,7 @@ import 'package:another_flushbar/flushbar.dart';
 
 /* ログイン画面 認証用 state */
 class LoginFormAuth extends StatefulWidget {
+  const LoginFormAuth({Key? key}) : super(key: key);
   // 使用するStateを指定
   @override
   _LoginForm createState() => _LoginForm();
@@ -56,7 +57,6 @@ class _LoginForm extends State<LoginFormAuth> {
         const SizedBox(height: 4),
         Align(
           alignment: Alignment.topRight,
-          child : Container(
             child: TextButton(
               // ボタンをクリックした時の処理
               onPressed: () {
@@ -70,7 +70,6 @@ class _LoginForm extends State<LoginFormAuth> {
               },
               child: const Text('パスワードを忘れた'),
             ),
-          ),
         ),
         const SizedBox(height: 32),
         Container(
@@ -105,16 +104,16 @@ class _LoginForm extends State<LoginFormAuth> {
                 // ログイン失敗
                 Flushbar(
                     title : "失敗しました" ,
-                    message : "ログインに失敗したゾ：${errorMessage}" ,
+                    message : "ログインに失敗しました：$errorMessage" ,
                     backgroundColor: Colors.redAccent,
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(8),
-                    duration:  Duration(seconds: 4),
-                    icon: Icon(
+                    duration:  const Duration(seconds: 4),
+                    icon: const Icon(
                       Icons.info_outline,
                       color: Colors.black,
                     )
-                )..show(context);
+                ).show(context);
               }
             },
             child: Text(
@@ -126,7 +125,7 @@ class _LoginForm extends State<LoginFormAuth> {
             ),
           ),
         ),
-        SizedBox(height: 36),
+        const SizedBox(height: 36),
       ],
     );
   }
@@ -153,6 +152,8 @@ Future<FirebaseAuthResultStatus> signInEmail( String email, String password) asy
 
 /* ログイン画面 */
 class WelcomePage extends StatelessWidget {
+  const WelcomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,8 +162,8 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             children: [
               Header(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
                 child: LoginFormAuth(),
               ),
             ],
