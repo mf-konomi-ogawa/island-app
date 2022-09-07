@@ -86,7 +86,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         onPressed: () async {
           final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return TweetForm();
+              return const TweetForm();
             }),
           );
           if (results != null) {

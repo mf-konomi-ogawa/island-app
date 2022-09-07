@@ -36,11 +36,18 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // タイムライン
-      body: _pageList[_selectedIndex],
+      body: SafeArea(
+        top: false,
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _pageList,
+        )
+      ),
 
       // ボトムナビゲーション
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         showSelectedLabels: false,
         selectedFontSize: 0,
         type: BottomNavigationBarType.fixed,
@@ -64,9 +71,7 @@ class HomeState extends State<Home> {
             label: 'プロフィール',
           ),
         ],
-        currentIndex: _selectedIndex,
         selectedItemColor: accentColor,
-        onTap: _onItemTapped
       ),
     );
   }

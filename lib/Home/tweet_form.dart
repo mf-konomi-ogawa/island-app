@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
-import 'package:another_flushbar/flushbar.dart';
-import 'package:apikicker/Home/home.dart';
-
 
 class TweetForm extends StatefulWidget {
-  TweetForm();
+  const TweetForm({Key? key}) : super(key: key);
 
   @override
   _TweetFormState createState() => _TweetFormState();
 }
 
 class _TweetFormState extends State<TweetForm> {
-  String tweetcontents = ""; // ツイート投稿用
+  String tweetContent = ""; // ツイート投稿用
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
@@ -50,11 +47,7 @@ class _TweetFormState extends State<TweetForm> {
             borderRadius: BorderRadius.circular(20) /*角の丸み*/
         ),
         child: Container(
-          // alignment: Alignment.topLeft,
           padding: const EdgeInsets.fromLTRB(20, 10, 15, 2),
-          // const BoxDecoration(
-          //     // border: Border(bottom: BorderSide(width: 1, color: lineColor))
-          //     ),
 
           //カード内のアイテム
           child: Column(children: [
@@ -87,16 +80,14 @@ class _TweetFormState extends State<TweetForm> {
                     child: Container(
                       height: 38,
                       decoration:  BoxDecoration(
-                        // shape: BoxShape.circle,
                         borderRadius: BorderRadius.circular(5),
                         gradient: gColor,
 
                       ),
-                      // padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
                       child: ElevatedButton.icon(
                         onPressed: () async {
                           HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetAdd');
-                          final results = await callable('tweetcontents');
+                          final results = await callable( tweetContent );
                           Navigator.of(context).pop(results);
                         },
                         label: const Text(
@@ -107,13 +98,7 @@ class _TweetFormState extends State<TweetForm> {
                           ),
                         ),
                         icon: const Icon(Icons.create, size: 20),
-                        style: ElevatedButton.styleFrom(primary: Colors.transparent),
-                        // style: ElevatedButton.styleFrom(
-                        //   // primary: accentColor,
-                        //   onPrimary: Colors.black,
-                        //   shape: const StadiumBorder(),
-                        //   padding: const EdgeInsets.fromLTRB(20, 10, 25, 10),
-                        // ),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
                       ),
                     ),
                     // ),
@@ -126,20 +111,12 @@ class _TweetFormState extends State<TweetForm> {
                 children: <Widget>[
                   Container(
                     margin: const EdgeInsets.fromLTRB(5, 0, 20, 10),
-                   //画像を丸型にする
-                    // child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(100),
-                    //     child: Image.asset(image,
-                    //         scale: 20,
-                    //         width: 40,
-                    //         height: 40,
-                    //         fit: BoxFit.cover)),
                   ),
                   Container(
                     margin: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                    child: Text(
+                    child: const Text(
                       'testname',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
                       ),
@@ -170,7 +147,7 @@ class _TweetFormState extends State<TweetForm> {
                 ),
                 onChanged: (String value) {
                   setState(() {
-                    tweetcontents = value;
+                    tweetContent = value;
                   });
                 },
               ),
