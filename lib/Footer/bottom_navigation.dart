@@ -19,19 +19,15 @@ class BottomNavigation extends StatelessWidget {
         items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'ホーム',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: '検索',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: '通知',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
-            label: 'プロフィール',
           ),
         ]
       ),
