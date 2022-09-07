@@ -31,7 +31,7 @@ class _LoginForm extends State<LoginFormAuth> {
       children: <Widget>[
         TextFormField(
 //          controller: TextEditingController( text: "ryo_usagawa@mforce.co.jp" ), // デバッグ用初期値
-          decoration: InputDecoration(labelText: "メールアドレス"),
+          decoration: const InputDecoration(labelText: "メールアドレス"),
           textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
           autofocus: true, // 画面開いた際に自動でフォーカスするように設定
           onChanged: (String value) {
@@ -41,7 +41,7 @@ class _LoginForm extends State<LoginFormAuth> {
           },
         ),
         TextFormField(
-          decoration: InputDecoration(labelText: "パスワード"),
+          decoration: const InputDecoration(labelText: "パスワード"),
           obscureText: true,
           onChanged: (String value) {
             setState(() {
@@ -53,7 +53,7 @@ class _LoginForm extends State<LoginFormAuth> {
             FocusScope.of(context).requestFocus(_loginFocusNode);
           },
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Align(
           alignment: Alignment.topRight,
           child : Container(
@@ -68,17 +68,17 @@ class _LoginForm extends State<LoginFormAuth> {
                   }),
                 );
               },
-              child: Text('パスワードを忘れた'),
+              child: const Text('パスワードを忘れた'),
             ),
           ),
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         Container(
           width: double.infinity,
           // ログインボタン
           child: TextButton(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
