@@ -666,7 +666,7 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(5, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset('assets/images/maru2.png',
+                              Image.asset('images/mori.png',
                                   width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.favorite,
@@ -679,7 +679,7 @@ class NotificationScreen extends StatelessWidget {
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
                               Image.asset(
-                                  'assets/images/icon_image/20211217.jpg',
+                                  'images/icon_image/20211217.jpg',
                                   width: 35,
                                   height: 35,
                                   fit: BoxFit.cover),
@@ -694,7 +694,7 @@ class NotificationScreen extends StatelessWidget {
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
                               Image.asset(
-                                  'assets/images/icon_image/20211218.jpg',
+                                  'images/icon_image/20211218.jpg',
                                   width: 35,
                                   height: 35,
                                   fit: BoxFit.cover),
@@ -708,7 +708,7 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset('assets/images/mori.png',
+                              Image.asset('images/mori.png',
                                   width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.star_rate,
@@ -721,7 +721,7 @@ class NotificationScreen extends StatelessWidget {
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
                               Image.asset(
-                                  'assets/images/icon_image/20220208.jpg',
+                                  'images/icon_image/20220208.jpg',
                                   width: 35,
                                   height: 35,
                                   fit: BoxFit.cover),
