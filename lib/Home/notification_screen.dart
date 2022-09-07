@@ -149,22 +149,22 @@ class NotificationScreen extends StatelessWidget {
             // _eventItem(),
             _replyItem(
                 "UserName0",
-                Image.asset('assets/images/mori.png', scale: 30),
+                Image.asset('images/mori.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _reactionItem('この文章がリアクションされたものです。どうやって紐づけるか悩みますね'),
             _reactionItem('リアクションが複数あるので、通知欄にどう表示するか悩み中です'),
             _replyItem(
                 "UserName0",
-                Image.asset('assets/images/mori.png', scale: 30),
+                Image.asset('images/mori.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _reactionItem('リアクションが複数あるので、通知欄にどう表示するか悩み中です'),
             _replyItem(
                 "UserName0",
-                Image.asset('assets/images/mori.png', scale: 30),
+                Image.asset('images/mori.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _replyItem(
                 "UserName0",
-                Image.asset('assets/images/mori.png', scale: 30),
+                Image.asset('images/mori.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
           ],
         ),

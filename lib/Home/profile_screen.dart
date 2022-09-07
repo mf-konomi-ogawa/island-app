@@ -107,7 +107,7 @@ Widget _profileItem() {
               children: <Widget>[
                 //アイコン
                 _iconItem(Image.asset(
-                  'assets/images/maru1.png',
+                  'images/mori.png',
                   width: 120,
                   height: 120,
                   fit: BoxFit.fill,

@@ -1,3 +1,6 @@
+import 'package:apikicker/Home/notification_screen.dart';
+import 'package:apikicker/Home/profile_screen.dart';
+import 'package:apikicker/Home/search_screen.dart';
 import 'package:apikicker/Home/timeline_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +19,14 @@ class HomeState extends State<Home> {
 
   int _selectedIndex = 0;
 
+  static final List<Widget> _pageList = [
+    const TimelineScreen(),
+    const SearchScreen(),
+    const NotificationScreen(),
+    const ProfileScreen()
+  ];
+
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -26,7 +37,7 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       // タイムライン
-      body: TimelineScreen(),
+      body: _pageList[_selectedIndex],
 
       // ボトムナビゲーション
       bottomNavigationBar: BottomNavigationBar(
@@ -53,7 +64,9 @@ class HomeState extends State<Home> {
             label: 'プロフィール',
           ),
         ],
+        currentIndex: _selectedIndex,
         selectedItemColor: accentColor,
+        onTap: _onItemTapped
       ),
     );
   }
