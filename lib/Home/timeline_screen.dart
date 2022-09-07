@@ -106,8 +106,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: ((context) => TweetDetails(
-            "UserName",
-            "この文章は一つ目です。長さを確認したいので別々に分けています",
+            title,
+            text,
             'images/mori.png',
             ))
           )
