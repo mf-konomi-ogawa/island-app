@@ -1,32 +1,52 @@
 /*    ログイン画面    */
 import 'package:apikicker/Home/home.dart';
-import 'package:apikicker/Home/home.dart';
+import 'package:apikicker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Header/header.dart';
 import 'package:apikicker/Auth/password_reset.dart';
 import 'package:apikicker/Auth/firebase_auth_error.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/* ログイン画面 認証用 state */
-class LoginFormAuth extends StatefulWidget {
-  const LoginFormAuth({Key? key}) : super(key: key);
-  // 使用するStateを指定
+/* ログイン画面 */
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({Key? key}) : super(key: key);
+
   @override
-  _LoginForm createState() => _LoginForm();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Header(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: LoginForm(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-/* ログイン画面 入力フォーム */
-class _LoginForm extends State<LoginFormAuth> {
-  // 入力されたメールアドレス
-  String newUserEmail = "";
-  // 入力されたパスワード
-  String newUserPassword = "";
+/* ログイン画面 認証用 state */
+class LoginForm extends ConsumerWidget {
+  LoginForm({Key? key}) : super(key: key);
+
   // パスワード入力フォームでエンターキー押下でログインを実行するように
   final _loginFocusNode = FocusNode();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Providerから値を受け取る
+    final emailStateController = ref.read(emailProvider.notifier);
+    final email = ref.watch(emailProvider);
+    final passwordStateController = ref.watch(passwordProvider.notifier);
+    final password = ref.watch(passwordProvider);
 
     return Column(
       children: <Widget>[
@@ -36,18 +56,15 @@ class _LoginForm extends State<LoginFormAuth> {
           textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
           autofocus: true, // 画面開いた際に自動でフォーカスするように設定
           onChanged: (String value) {
-            setState(() {
-              newUserEmail = value;
-            });
+            // Providerから値を更新
+            emailStateController.state = value;
           },
         ),
         TextFormField(
           decoration: const InputDecoration(labelText: "パスワード"),
           obscureText: true,
           onChanged: (String value) {
-            setState(() {
-              newUserPassword = value;
-            });
+            passwordStateController.state = value;
           },
           onFieldSubmitted: (_) {
             //エンターキーを押した時の処理
@@ -72,7 +89,7 @@ class _LoginForm extends State<LoginFormAuth> {
             ),
         ),
         const SizedBox(height: 32),
-        Container(
+        SizedBox(
           width: double.infinity,
           // ログインボタン
           child: TextButton(
@@ -86,17 +103,14 @@ class _LoginForm extends State<LoginFormAuth> {
             onPressed: () async {
               // ログイン
               final FirebaseAuthResultStatus result = await signInEmail(
-                newUserEmail , newUserPassword,
+                email , password,
               );
               if( result == FirebaseAuthResultStatus.Successful ) {
                 // ログイン成功
                 // タイムライン画面に遷移＋ログイン画面を破棄
                 await Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) {
-                    final FirebaseAuth auth = FirebaseAuth.instance;
-                    final User user = auth.currentUser!;
-                    //return TimelineListScreen(user);
-                    return Home(user);
+                    return const Home();
                   }),
                 );
               } else {
@@ -148,28 +162,4 @@ Future<FirebaseAuthResultStatus> signInEmail( String email, String password) asy
     result = handleException(e);
   }
   return result;
-}
-
-/* ログイン画面 */
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Header(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: LoginFormAuth(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
