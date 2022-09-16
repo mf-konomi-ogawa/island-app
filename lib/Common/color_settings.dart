@@ -15,6 +15,10 @@ const LinearGradient gColor = LinearGradient(
   ],
 ); /*アクセントカラー(差し色)*/
 
+// ボタンカラー(デザイントークンができるまで)
+const Color buttonColor = Color.fromRGBO(65, 129, 255, 1);
+const Color buttonColor2 = Color.fromRGBO(69, 72, 78, 1);
+
 //投稿ボタン
 const BoxDecoration gradationBox = BoxDecoration(
   shape: BoxShape.circle,

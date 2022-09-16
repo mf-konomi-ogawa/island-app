@@ -1,19 +1,17 @@
+import 'package:apikicker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TweetForm extends StatefulWidget {
-  const TweetForm({Key? key}) : super(key: key);
-
-  @override
-  _TweetFormState createState() => _TweetFormState();
-}
-
-class _TweetFormState extends State<TweetForm> {
-  String tweetContent = ""; // ツイート投稿用
+class TweetForm extends ConsumerWidget {
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var tweetContent = <String, String?> {
+      "uid": ref.watch(userProvider)?.uid,
+      "value": "",
+    }; // ツイート投稿用
     return Scaffold(
       backgroundColor: bgColor,
       resizeToAvoidBottomInset: false,
@@ -27,7 +25,7 @@ class _TweetFormState extends State<TweetForm> {
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
                   reverse: true,
-                  child: _cardItem(context),
+                  child: _cardItem(context, tweetContent),
                 ),
               ),
             ),
@@ -38,7 +36,7 @@ class _TweetFormState extends State<TweetForm> {
   }
 
   //カードアイテム
-  Widget _cardItem( BuildContext context ) {
+  Widget _cardItem( BuildContext context, Map tweetContent ) {
     return GestureDetector(
       child: Card(
         margin: const EdgeInsets.all(10),
@@ -146,9 +144,7 @@ class _TweetFormState extends State<TweetForm> {
                   color: Colors.white,
                 ),
                 onChanged: (String value) {
-                  setState(() {
-                    tweetContent = value;
-                  });
+                  tweetContent['value'] = value;
                 },
               ),
             ),

@@ -358,21 +358,13 @@ class NotificationScreen extends StatelessWidget {
                               const Spacer(),
                               /*クリップアイコンを右端に寄せるための記述*/
 
-                              //クリップ(ブックマーク的立ち位置)
-                              LikeButton(
+                              Container(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                //アニメーションで変化するときの色
-                                circleColor: const CircleColor(
-                                    start: Colors.pink, end: Colors.redAccent),
-                                likeBuilder: (bool isLiked) {
-                                  //表示するアイコン
-                                  return Icon(
-                                    Icons.attach_file,
+                                child: const Icon(
+                                    Icons.more_horiz,
                                     size: 18,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
+                                    color: Colors.grey
+                                )
                               ),
                             ]),
 

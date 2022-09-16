@@ -47,10 +47,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final results = await callable();
     setState(() {
       debugTimelineData = results.data.toString();
-      developer.log( "変数 timelineData = $debugTimelineData", name: "dev.logging" );
+      print("ツイートの取得結果: " + debugTimelineData);
 
       tweetContentslist = results.data;
-      developer.log( "変数 list.length = ${tweetContentslist.length}", name: "dev.logging" );
     });
   }
 
@@ -68,9 +67,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
             return Card(
               color: bgColor,
               child: _tweetItem(
+                tweetContentslist[index]['id'],
                 "UserName",
                 'images/mori.png',
-                tweetContentslist[index]['contents'],
+                tweetContentslist[index]['contents']
               )
             );
           },
@@ -86,7 +86,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         onPressed: () async {
           final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return const TweetForm();
+              return TweetForm();
             }),
           );
           if (results != null) {
@@ -100,12 +100,20 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
   
   // ツイートのデザイン
-  Widget _tweetItem(String title, String image, String text) {
+  Widget _tweetItem(String? id, String title, String image, String text) {
+    String? dropdownValue = "ツイートを削除";
+    List<String> dropdownItems = [ "ツイートを削除" ];
+    // String _resultString = 'result';
+
+    // void _setResultString(Object? result) =>
+    //     _resultString = (result ?? 'null') as String;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: ((context) => TweetDetails(
+            id,
             title,
             text,
             'images/mori.png',
@@ -177,23 +185,38 @@ class _TimelineScreenState extends State<TimelineScreen> {
                               ),
 
                               const Spacer(),
-                              /*クリップアイコンを右端に寄せるための記述*/
-
-                              //クリップ(ブックマーク的立ち位置)
-                              LikeButton(
+                              
+                              Container(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                //アニメーションで変化するときの色
-                                circleColor: const CircleColor(
-                                    start: accentColor, end: Colors.redAccent),
-                                likeBuilder: (bool isLiked) {
-                                  //表示するアイコン
-                                  return Icon(
-                                    Icons.attach_file,
+                                child: DropdownButton<String>(
+                                  // value: dropdownValue,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      dropdownValue = newValue;
+                                    });
+                                  },
+                                  dropdownColor: bgColor,
+                                  style: const TextStyle(
+                                    color: Colors.white
+                                  ),
+                                  items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                      onTap: () {
+                                        _controlDialog(id, dropdownValue); 
+                                      }
+                                    );
+                                  }).toList(),
+                                  icon: const Icon(
+                                    Icons.more_horiz,
                                     size: 18,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
+                                    color: Colors.grey
+                                  ),
+                                  underline: Container(
+                                    height: 0,
+                                  ),
+                                )
                               ),
                             ]),
 
@@ -438,5 +461,65 @@ class _TimelineScreenState extends State<TimelineScreen> {
         ),
       ),
     );
+  }
+
+  void _controlDialog(documentId, dropdownValue) {
+    if(dropdownValue == "ツイートを削除") {
+      _showAlertDialog(documentId);
+    }
+  }
+  
+  void _showAlertDialog(documentId) async {
+    BuildContext innerContext;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        innerContext = context;
+        return AlertDialog(
+          backgroundColor: bgColor,
+          title: const Text('ツイートを削除しますか？'),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0
+          ),
+          titlePadding: const EdgeInsets.all(10),
+          actions: [
+            Center(
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: buttonColor,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      _deletePersonalActivity(documentId);
+                      Navigator.pop(innerContext);
+                    },
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: buttonColor2,
+                    ),
+                    child: const Text('キャンセル'),
+                    onPressed: () {
+                      Navigator.pop(innerContext);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    // setState(() => _setResultString(result));
+  }
+
+  void _deletePersonalActivity(personalActivityId) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
+    final results = await callable(personalActivityId);
+    print("results:" + results.toString());
   }
 }

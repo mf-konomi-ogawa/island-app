@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 
 class TweetDetails extends StatelessWidget {
-  TweetDetails(this.name, this.text, this.image, {Key? key}) : super(key: key);
+  TweetDetails(this.id, this.title, this.text, this.image, {Key? key}) : super(key: key);
 
-  String name = "";
+  String? id = "";
+  String title = "";
   String text = "";
   String image = '';
 
@@ -32,7 +33,8 @@ class TweetDetails extends StatelessWidget {
           ListView(
             children: [
               _detail(
-                  name,
+                  id,
+                  title,
                   Image.asset(image,
                       scale: 30, width: 50, height: 50, fit: BoxFit.cover),
                   // const Icon(Icons.account_circle, color: Colors.white, size: 62),
@@ -64,7 +66,7 @@ class TweetDetails extends StatelessWidget {
   }
 
   //投稿の詳細
-  Widget _detail(String title, Image image, String text) {
+  Widget _detail(String? id, String title, Image image, String text) {
     return GestureDetector(
       //コンテナの中に配置していく
       child: Container(
@@ -116,22 +118,15 @@ class TweetDetails extends StatelessWidget {
 
                     const Spacer(),
                     /*クリップアイコンを右端に寄せるための記述*/
-                    //クリップ(ブックマーク的立ち位置)
-                    LikeButton(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      //アニメーションで変化するときの色
-                      circleColor: const CircleColor(
-                          start: Colors.pink, end: Colors.redAccent),
-                      likeBuilder: (bool isLiked) {
-                        //表示するアイコン
-                        return Icon(
-                          Icons.attach_file,
-                          size: 25,
-                          color: isLiked ? accentColor : Colors.grey,
-                        );
-                      },
-                    ),
+                    
+                    Container(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: const Icon(
+                                    Icons.more_horiz,
+                                    size: 18,
+                                    color: Colors.grey
+                                )
+                              ),
                   ]),
 
               //テキスト(投稿本文)
@@ -429,7 +424,7 @@ class TweetDetails extends StatelessWidget {
                               const Spacer(),
                               /*クリップアイコンを右端に寄せるための記述*/
 
-                              //クリップ(ブックマーク的立ち位置)
+                              
                               LikeButton(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -439,7 +434,7 @@ class TweetDetails extends StatelessWidget {
                                 likeBuilder: (bool isLiked) {
                                   //表示するアイコン
                                   return Icon(
-                                    Icons.attach_file,
+                                    Icons.more_horiz,
                                     size: 18,
                                     color: isLiked ? accentColor : Colors.grey,
                                   );
