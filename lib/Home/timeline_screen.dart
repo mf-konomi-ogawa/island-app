@@ -100,7 +100,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
   
   // ツイートのデザイン
-  Widget _tweetItem(String? id, String title, String image, String text) {
+  Widget _tweetItem(String id, String title, String image, String text) {
     String? dropdownValue = "ツイートを削除";
     List<String> dropdownItems = [ "ツイートを削除" ];
     // String _resultString = 'result';
