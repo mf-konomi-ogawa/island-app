@@ -1,128 +1,26 @@
-import 'package:another_flushbar/flushbar.dart';
-import 'package:apikicker/Home/tweet_details.dart';
-import 'package:apikicker/Home/tweet_form.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/material.dart';
+
+
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'dart:developer' as developer;
 
-class TimelineScreen extends StatefulWidget {
-  const TimelineScreen({Key? key}) : super(key: key);
+class ReplyItem extends StatelessWidget {
+  ReplyItem(this.name, this.image, this.text, {Key? key}) : super(key: key);
 
-  @override
-  State<TimelineScreen> createState() => _TimelineScreenState();
-}
-
-class _TimelineScreenState extends State<TimelineScreen> {
-
-  String debugTimelineData = "";
-  List<dynamic> tweetContentslist = [];
-
-    @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  void _showTopFlushbar() {
-      Flushbar(
-        title : "ツイート投稿" ,
-        message : "ツイートを投稿しました。" ,
-        flushbarPosition: FlushbarPosition.TOP,
-        backgroundColor: Colors.blueAccent,
-        margin: const EdgeInsets.all(8),
-        borderRadius: BorderRadius.circular(8),
-        duration:  const Duration(seconds: 3),
-        isDismissible: true,
-        icon: const Icon(
-          Icons.info_outline,
-          color: Colors.white,
-        )
-      ).show(context);
-  }
-
-  Future<void> _load() async{
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
-    final results = await callable();
-    setState(() {
-      debugTimelineData = results.data.toString();
-
-      tweetContentslist = results.data;
-    });
-  }
+  String name = "";
+  Image image;
+  String text = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: RefreshIndicator(
-        onRefresh: () async{
-          await _load();
-        },
-        child : ListView.builder(
-          itemCount: tweetContentslist.length,
-          itemBuilder: ( BuildContext context , int index ){
-            return Card(
-              color: bgColor,
-              child: _tweetItem(
-                tweetContentslist[index]['id'],
-                "UserName",
-                'images/mori.png',
-                tweetContentslist[index]['contents']
-              )
-            );
-          },
-        ),
-      ),
-       // 投稿ボタン
-      floatingActionButton : FloatingActionButton(
-        child: Container(
-          decoration: gradationBox,
-          child: const Icon(Icons.edit),
-          padding: const EdgeInsets.all(17.0),
-        ),
-        onPressed: () async {
-          final results = await Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) {
-              return TweetForm();
-            }),
-          );
-          if (results != null) {
-            _load();
-            _showTopFlushbar();
-          }
-        },
-      ),
-    );
-  }
-
-  
-  // ツイートのデザイン
-  Widget _tweetItem(String id, String title, String image, String text) {
-    String? dropdownValue = "ツイートを削除";
-    List<String> dropdownItems = [ "ツイートを削除" ];
-    // String _resultString = 'result';
-
-    // void _setResultString(Object? result) =>
-    //     _resultString = (result ?? 'null') as String;
-
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: ((context) => TweetDetails(
-            id,
-            title,
-            text,
-            'images/mori.png',
-            ))
-          )
-        );
-      },
+      //コンテナの中に配置していく
       child: Container(
         padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
+        // alignment: Alignment.topLeft,
         decoration: const BoxDecoration(
+            color: bgColor2,
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
         //（アイコン）（ユーザー名・投稿）を横に並べる
@@ -137,12 +35,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.all(4.0),
-
-                  //画像を丸型にする
+                  // 画像を丸型にする。サイズ感は画像読み込むところで行う
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: Image.asset(image,
-                        scale: 15, width: 40, height: 40, fit: BoxFit.cover),
+                    child: image,
+                    // child:
                   ),
                 ),
               ],
@@ -162,9 +59,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
                               Container(
                                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
                                 child: Text(
-                                  title,
-                                  // style: GoogleFonts.alice(
+                                  name,
                                   style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                     fontSize: 18.0,
                                   ),
@@ -184,38 +81,23 @@ class _TimelineScreenState extends State<TimelineScreen> {
                               ),
 
                               const Spacer(),
+                              /*クリップアイコンを右端に寄せるための記述*/
+
                               
-                              Container(
+                              LikeButton(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: DropdownButton<String>(
-                                  // value: dropdownValue,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      dropdownValue = newValue;
-                                    });
-                                  },
-                                  dropdownColor: bgColor,
-                                  style: const TextStyle(
-                                    color: Colors.white
-                                  ),
-                                  items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                      onTap: () {
-                                        _controlDialog(id, dropdownValue); 
-                                      }
-                                    );
-                                  }).toList(),
-                                  icon: const Icon(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                //アニメーションで変化するときの色
+                                circleColor: const CircleColor(
+                                    start: Colors.pink, end: Colors.redAccent),
+                                likeBuilder: (bool isLiked) {
+                                  //表示するアイコン
+                                  return Icon(
                                     Icons.more_horiz,
                                     size: 18,
-                                    color: Colors.grey
-                                  ),
-                                  underline: Container(
-                                    height: 0,
-                                  ),
-                                )
+                                    color: isLiked ? accentColor : Colors.grey,
+                                  );
+                                },
                               ),
                             ]),
 
@@ -265,7 +147,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                                 },
                                 //アニメーションで変化するときの色
                                 circleColor: const CircleColor(
-                                    start: Colors.tealAccent, end: accentColor),
+                                    start: Colors.pink, end: Colors.redAccent),
                                 likeBuilder: (bool isLiked) {
                                   //表示するアイコン
                                   return Icon(
@@ -372,7 +254,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
                                   return result;
                                 },
                                 circleColor: const CircleColor(
-                                    start: accentColor, end: Colors.blueAccent),
+                                    start: Colors.lightBlueAccent,
+                                    end: Colors.blueAccent),
                                 likeBuilder: (bool isLiked) {
                                   return Icon(
                                     Icons.sentiment_satisfied_alt,
@@ -452,6 +335,12 @@ class _TimelineScreenState extends State<TimelineScreen> {
                                 ),
                               ),
                             ]),
+
+                        // Container(
+                        //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        //   child:
+                        //       const Icon(Icons.favorite, color: accentColor), /*リアクションボタン。改良予定*/
+                        // ),
                       ]),
                 ],
               ),
@@ -460,65 +349,5 @@ class _TimelineScreenState extends State<TimelineScreen> {
         ),
       ),
     );
-  }
-
-  void _controlDialog(documentId, dropdownValue) {
-    if(dropdownValue == "ツイートを削除") {
-      _showAlertDialog(documentId);
-    }
-  }
-  
-  void _showAlertDialog(documentId) async {
-    BuildContext innerContext;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        innerContext = context;
-        return AlertDialog(
-          backgroundColor: bgColor,
-          title: const Text('ツイートを削除しますか？'),
-          titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0
-          ),
-          titlePadding: const EdgeInsets.all(10),
-          actions: [
-            Center(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonColor,
-                    ),
-                    child: const Text('OK'),
-                    onPressed: () {
-                      _deletePersonalActivity(documentId);
-                      Navigator.pop(innerContext);
-                    },
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonColor2,
-                    ),
-                    child: const Text('キャンセル'),
-                    onPressed: () {
-                      Navigator.pop(innerContext);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-    // setState(() => _setResultString(result));
-  }
-
-  void _deletePersonalActivity(personalActivityId) async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
-    final results = await callable(personalActivityId);
-    print("results:" + results.toString());
   }
 }
