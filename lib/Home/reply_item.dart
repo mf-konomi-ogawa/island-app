@@ -6,11 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 
 class ReplyItem extends StatelessWidget {
-  ReplyItem(this.name, this.image, this.text, {Key? key}) : super(key: key);
+  ReplyItem(this.id, {Key? key}) : super(key: key);
 
-  String name = "";
-  Image image;
-  String text = "";
+  String id;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,8 @@ class ReplyItem extends StatelessWidget {
                   // 画像を丸型にする。サイズ感は画像読み込むところで行う
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: image,
+                    child: Image.asset("images/icon_image/20220202.jpg",
+                    scale: 30, width: 50, height: 50, fit: BoxFit.cover),
                     // child:
                   ),
                 ),
@@ -58,9 +57,9 @@ class ReplyItem extends StatelessWidget {
                               //ユーザー名
                               Container(
                                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
-                                child: Text(
-                                  name,
-                                  style: const TextStyle(
+                                child: const Text(
+                                  "テストユーザー",
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                     fontSize: 18.0,
@@ -104,9 +103,9 @@ class ReplyItem extends StatelessWidget {
                         //テキスト(投稿本文)
                         Container(
                           padding: const EdgeInsets.fromLTRB(10, 2, 10, 10),
-                          child: Text(
-                            text,
-                            style: const TextStyle(
+                          child: const Text(
+                            "テストリプライ",
+                            style: TextStyle(
                               color: textColor,
                               fontSize: 14.0,
                             ),
