@@ -1,4 +1,6 @@
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:apikicker/Home/reply_form.dart';
+import 'package:apikicker/Home/tweet_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
@@ -6,7 +8,7 @@ import 'package:like_button/like_button.dart';
 class TweetDetails extends StatelessWidget {
   TweetDetails(this.id, this.title, this.text, this.image, {Key? key}) : super(key: key);
 
-  String? id = "";
+  String id = "";
   String title = "";
   String text = "";
   String image = '';
@@ -62,6 +64,25 @@ class TweetDetails extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: GestureDetector(
+        child: Container(
+          height: 30,
+          color: bgColor,
+          child: const Text('コメントを書く', style: TextStyle(color: textColor2))
+        ),
+        onTap: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                height: 500,
+                color: bgColor2,
+                child: ReplyForm(id)
+              );
+            },
+          );
+        },
+      )
     );
   }
 

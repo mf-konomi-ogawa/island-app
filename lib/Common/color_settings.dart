@@ -5,6 +5,7 @@ const Color bgColor = Color(0xFF303237); /*暗い背景色*/
 const Color bgColor2 = Color(0xFF36393F); /*背景より気持ち明るい灰*/
 const Color lineColor = Color(0xFF45484E); /*投稿を区切る線の色(背景より明るい灰)*/
 const Color textColor = Color(0xFFDCDDDE); /*テキストの色(白)*/
+const Color textColor2 = Color.fromRGBO(112, 118, 123, 1);
 const Color accentColor = Color(0xFF62CDFF); /*アクセントカラー(差し色)*/
 const LinearGradient gColor = LinearGradient(
   colors: [
