@@ -1,6 +1,6 @@
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Home/reply_form.dart';
-import 'package:apikicker/Home/reply_item.dart';
+import 'package:apikicker/Home/reply_list.dart';
 import 'package:apikicker/Home/tweet_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,23 +30,20 @@ class TweetDetails extends StatelessWidget {
           style: TextStyle(fontSize: 16),
         ),
       ),
-      body: Stack(
-        alignment: Alignment.bottomRight,
-        children: <Widget>[
-          ListView(
-            children: [
-              _detail(
-                  id,
-                  title,
-                  Image.asset(image,
-                      scale: 30, width: 50, height: 50, fit: BoxFit.cover),
-                  text
-              ),
-              ReplyItem(
-                id,
-              ),
-            ],
+      body: Column(
+        children: [
+          _detail(
+              id,
+              title,
+              Image.asset(image,
+                  scale: 30, width: 50, height: 50, fit: BoxFit.cover),
+              text
           ),
+          Flexible(
+            child: ReplyList(
+              id,
+            ),
+          )
         ],
       ),
       bottomNavigationBar: GestureDetector(

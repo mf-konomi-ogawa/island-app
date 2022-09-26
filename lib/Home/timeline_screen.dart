@@ -19,7 +19,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   String debugTimelineData = "";
   List<dynamic> tweetContentslist = [];
 
-    @override
+  @override
   void initState() {
     super.initState();
     _load();
