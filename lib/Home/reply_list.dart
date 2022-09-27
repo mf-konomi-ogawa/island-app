@@ -30,13 +30,10 @@ class _ReplyListState extends State<ReplyList> {
   Future<void> _load() async{
     var requestParams = <String, String?> {
       "id": widget.id,
-    }; // ツ
+    };
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocReplyGet');
     final results = await callable(requestParams);
     setState(() {
-      debugReplyListData = results.data.toString();
-      print(debugReplyListData);
-
       replyList = results.data;
     });
   }
