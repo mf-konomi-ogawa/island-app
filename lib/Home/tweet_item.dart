@@ -23,6 +23,32 @@ class TweetItem extends StatefulWidget {
 class _TweetItemState extends State<TweetItem> {
   String? dropdownValue = "ツイートを削除";
   List<String> dropdownItems = [ "ツイートを削除" ];
+  List<dynamic> receivedEmotions = [];
+  bool currentUserHasLike = false;
+
+  String debug = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async{
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionGet');
+    final results = await callable({"id": widget.id});
+    setState(() {
+      debug = results.data.toString();
+      print(debug);
+      receivedEmotions = results.data;
+      // 
+      for (var emotion in receivedEmotions) {
+        if(emotion.personId == "1") {
+          currentUserHasLike = true;
+        }
+      }
+    });
+  }
 
   void _controlDialog(documentId, dropdownValue) {
     if(dropdownValue == "ツイートを削除") {
@@ -221,31 +247,12 @@ class _TweetItemState extends State<TweetItem> {
                                 padding:
                                 const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                likeCount: 16,
-                                /*リアクションを押された数*/
-                                //カウント数字の色を変える
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  final Color color =
-                                  isLiked ? accentColor : Colors.grey;
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      'heart',
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
+                                likeCount: receivedEmotions.length,
                                 //アニメーションで変化するときの色
                                 circleColor: const CircleColor(
                                     start: Colors.tealAccent, end: accentColor),
                                 likeBuilder: (bool isLiked) {
+                                  isLiked = currentUserHasLike;
                                   //表示するアイコン
                                   return Icon(
                                     Icons.favorite,
@@ -253,182 +260,6 @@ class _TweetItemState extends State<TweetItem> {
                                     color: isLiked ? accentColor : Colors.grey,
                                   );
                                 },
-                              ),
-
-                              //星
-                              LikeButton(
-                                padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                likeCount: 2,
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  final Color color =
-                                  isLiked ? accentColor : Colors.grey;
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      'star',
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
-                                circleColor: const CircleColor(
-                                    start: Colors.white38, end: Colors.yellow),
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    Icons.star_rate,
-                                    size: 25,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
-                              ),
-
-                              //グッド
-                              LikeButton(
-                                padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                likeCount: 20,
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  final Color color =
-                                  isLiked ? accentColor : Colors.grey;
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      'good',
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
-                                circleColor: const CircleColor(
-                                    start: Color(0xFFC107FF),
-                                    end: Color(0xFFC107FF)),
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    Icons.thumb_up_alt,
-                                    size: 25,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
-                              ),
-
-                              //微笑むように笑う
-                              LikeButton(
-                                padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                likeCount: 39,
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  final Color color =
-                                  isLiked ? accentColor : Colors.grey;
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      'smile',
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
-                                circleColor: const CircleColor(
-                                    start: accentColor, end: Colors.blueAccent),
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    Icons.sentiment_satisfied_alt,
-                                    size: 25,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
-                              ),
-
-                              //口をあけて笑う
-                              LikeButton(
-                                padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                likeCount: 8,
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  final Color color =
-                                  isLiked ? accentColor : Colors.grey;
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      'laughter',
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
-                                circleColor: const CircleColor(
-                                    start: Colors.lightGreenAccent,
-                                    end: Colors.lightGreen),
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    Icons.sentiment_very_satisfied,
-                                    size: 25,
-                                    color: isLiked ? accentColor : Colors.grey,
-                                  );
-                                },
-                              ),
-                            ]),
-                        //コメント
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
-                            /*左揃えにする*/
-                            children: <Widget>[
-                              Container(
-                                padding:
-                                const EdgeInsets.fromLTRB(15, 0, 0, 10),
-                                child: const Icon(
-                                  Icons.speaker_notes,
-                                  size: 25,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                                child: const Text(
-                                  'コメント',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14.0,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                                child: const Text(
-                                  '11件',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14.0,
-                                  ),
-                                ),
                               ),
                             ]),
                       ]),
