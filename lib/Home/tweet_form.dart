@@ -5,6 +5,7 @@ import 'package:apikicker/Common/color_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TweetForm extends ConsumerWidget {
+  const TweetForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

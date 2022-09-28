@@ -26,6 +26,16 @@ class _TimelineScreenState extends State<TimelineScreen> {
     _load();
   }
 
+  Future<void> _load() async{
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
+    final results = await callable();
+    setState(() {
+      debugTimelineData = results.data.toString();
+
+      tweetContentslist = results.data;
+    });
+  }
+
   void _showTopFlushbar() {
       Flushbar(
         title : "ツイート投稿" ,
@@ -41,16 +51,6 @@ class _TimelineScreenState extends State<TimelineScreen> {
           color: Colors.white,
         )
       ).show(context);
-  }
-
-  Future<void> _load() async{
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
-    final results = await callable();
-    setState(() {
-      debugTimelineData = results.data.toString();
-
-      tweetContentslist = results.data;
-    });
   }
 
   @override
