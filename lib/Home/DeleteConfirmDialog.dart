@@ -33,7 +33,6 @@ class DeleteConfirmDialog extends StatelessWidget {
                 ),
                 child: const Text('OK'),
                 onPressed: () {
-                  print(documentId);
                   _deletePersonalActivity(documentId);
                   Navigator.pop(innerContext);
                 },
@@ -57,6 +56,5 @@ class DeleteConfirmDialog extends StatelessWidget {
   void _deletePersonalActivity(personalActivityId) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
     final results = await callable(personalActivityId);
-    print("results:" + results.toString());
   }
 }
