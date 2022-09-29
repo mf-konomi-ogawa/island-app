@@ -8,6 +8,7 @@ import 'package:apikicker/Auth/password_reset.dart';
 import 'package:apikicker/Auth/firebase_auth_error.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apikicker/Common/color_settings.dart';
 
 /* ログイン画面 */
 class WelcomePage extends StatelessWidget {
@@ -94,6 +95,7 @@ class LoginForm extends ConsumerWidget {
           // ログインボタン
           child: TextButton(
             style: TextButton.styleFrom(
+              backgroundColor: textColor,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -151,7 +153,7 @@ Future<FirebaseAuthResultStatus> signInEmail( String email, String password) asy
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email, password: password);
-    print('succeed');
+    print('login succeed');
     if (userCredential.user! != null) {
       result = FirebaseAuthResultStatus.Successful;
     } else {

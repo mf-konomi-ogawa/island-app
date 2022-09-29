@@ -10,9 +10,9 @@ class _HeaderTitle extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: Image.asset('images/logo_dummy.png'),
+          child: Image.asset('images/lodo_island_transparent_medium.png'),
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 32),
       ],
     );
   }
@@ -22,9 +22,7 @@ class _HeaderTitle extends StatelessWidget {
 class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final double height = 600;
     return Container(
-      height: height,
       child: Stack(
         children: [
           Align(
