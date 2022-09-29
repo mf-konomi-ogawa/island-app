@@ -69,7 +69,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
               child: TweetItem(
                 tweetContentslist[index]['id'],
                 "UserName",
-                'images/mori.png',
+                'images/kkrn_icon_user_1.png',
                 tweetContentslist[index]['contents']
               )
             );

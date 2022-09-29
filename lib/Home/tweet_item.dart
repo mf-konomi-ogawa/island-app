@@ -118,7 +118,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
             widget.id,
             widget.title,
             widget.text,
-            'images/mori.png',
+            'images/kkrn_icon_user_1.png',
             ))
           )
         );

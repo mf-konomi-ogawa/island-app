@@ -149,22 +149,22 @@ class NotificationScreen extends StatelessWidget {
             // _eventItem(),
             _replyItem(
                 "UserName0",
-                Image.asset('images/mori.png', scale: 30),
+                Image.asset('images/kkrn_icon_user_1.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _reactionItem('この文章がリアクションされたものです。どうやって紐づけるか悩みますね'),
             _reactionItem('リアクションが複数あるので、通知欄にどう表示するか悩み中です'),
             _replyItem(
                 "UserName0",
-                Image.asset('images/mori.png', scale: 30),
+                Image.asset('images/kkrn_icon_user_1.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _reactionItem('リアクションが複数あるので、通知欄にどう表示するか悩み中です'),
             _replyItem(
                 "UserName0",
-                Image.asset('images/mori.png', scale: 30),
+                Image.asset('images/kkrn_icon_user_1.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
             _replyItem(
                 "UserName0",
-                Image.asset('images/mori.png', scale: 30),
+                Image.asset('images/kkrn_icon_user_1.png', scale: 30),
                 "この文章は一つ目です。長さを確認したいので別々に分けています"),
           ],
         ),
@@ -658,7 +658,7 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(5, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset('images/mori.png',
+                              Image.asset('images/kkrn_icon_user_1.png',
                                   width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.favorite,
@@ -700,7 +700,7 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset('images/mori.png',
+                              Image.asset('images/kkrn_icon_user_1.png',
                                   width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.star_rate,
