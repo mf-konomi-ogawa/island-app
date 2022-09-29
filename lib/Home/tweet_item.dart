@@ -282,7 +282,6 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                         emotionCount -= 1;
                                       });
                                   }
-                                  _load();
                                   return;
                                 },
                               ),
