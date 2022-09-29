@@ -175,16 +175,16 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                               ),
 
                               //投稿時間表示(今から数えた時間が表示される)
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
-                                child: const Text(
-                                  '５分前',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                              //   child: const Text(
+                              //     '５分前',
+                              //     style: TextStyle(
+                              //       color: Colors.grey,
+                              //       fontSize: 12.0,
+                              //     ),
+                              //   ),
+                              // ),
 
                               const Spacer(),
                               
@@ -251,7 +251,6 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                     start: Colors.tealAccent, end: accentColor),
                                 isLiked: currentUserLikes,
                                 likeBuilder: (bool isLiked) {
-                                  isLiked = currentUserLikes;
                                   //表示するアイコン
                                   return Icon(
                                     Icons.favorite,
@@ -259,7 +258,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                     color: isLiked ? accentColor : Colors.grey,
                                   );
                                 },
-                                onTap: (isLiked) async {
+                                onTap: (bool isLiked) async {
                                   setState(() {
                                     currentUserLikes = !isLiked;
                                   });
@@ -269,18 +268,17 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                     "uid": ref.read(userProvider)?.uid
                                   };
                                   if(currentUserLikes) {
-                                      print("新規追加");
-                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionAdd');
-                                      await callable(data);
                                       setState(() {
                                         emotionCount += 1;
                                       });
-                                  } else {
-                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionDelete');
+                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionAdd');
                                       await callable(data);
+                                  } else {
                                       setState(() {
                                         emotionCount -= 1;
                                       });
+                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionDelete');
+                                      await callable(data);
                                   }
                                   return;
                                 },
