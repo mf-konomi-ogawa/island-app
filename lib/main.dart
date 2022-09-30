@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:apikicker/Auth/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // ユーザー情報の受け渡しを行うためのProvider
 final userProvider = StateProvider((ref) {
@@ -21,7 +22,7 @@ final passwordProvider = StateProvider.autoDispose((ref) {
   return '';
 });
 
-
+final firebaseFirestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
 /* プログラム開始点 */
 void main() async {

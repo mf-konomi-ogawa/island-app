@@ -2,20 +2,23 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:apikicker/Home/tweet_details.dart';
 import 'package:apikicker/Home/tweet_form.dart';
 import 'package:apikicker/Home/tweet_item.dart';
+import 'package:apikicker/main.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'dart:developer' as developer;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TimelineScreen extends StatefulWidget {
+class TimelineScreen extends ConsumerStatefulWidget {
   const TimelineScreen({Key? key}) : super(key: key);
 
   @override
-  State<TimelineScreen> createState() => _TimelineScreenState();
+  _TimelineScreenState createState() => _TimelineScreenState();
 }
 
-class _TimelineScreenState extends State<TimelineScreen> {
+class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
   String debugTimelineData = "";
   List<dynamic> tweetContentslist = [];
@@ -27,12 +30,24 @@ class _TimelineScreenState extends State<TimelineScreen> {
   }
 
   Future<void> _load() async{
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetTestAllGet');
-    final results = await callable();
-    setState(() {
-      debugTimelineData = results.data.toString();
+    final firestore = ref.read(firebaseFirestoreProvider);
+    var querySnapShot= await firestore.collection("Organization")
+      .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
+      .doc("nDqwJANhr1evjCBu5Ije").collection("Activity")
+      .doc("vD3FY8cRBsj9UWjJQswy").collection("PersonalActivity")
+      .orderBy('createdAt', descending: true)
+      .where("isReplyToActivity", isEqualTo: false).get();
 
-      tweetContentslist = results.data;
+    querySnapShot.docs.forEach( (doc) {
+      // ドキュメントIDをそれぞれのツイートに含める
+      Map<String, dynamic> tweetInfo = 
+          {
+            "id": doc.id,
+          };
+      tweetInfo.addAll(doc.data());
+      setState(() {
+        tweetContentslist.add(tweetInfo);
+      });
     });
   }
 
