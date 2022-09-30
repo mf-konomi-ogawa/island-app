@@ -31,7 +31,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
   Future<void> _load() async{
     final firestore = ref.read(firebaseFirestoreProvider);
-    var querySnapShot= await firestore.collection("Organization")
+    var querySnapShot = await firestore.collection("Organization")
       .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
       .doc("nDqwJANhr1evjCBu5Ije").collection("Activity")
       .doc("vD3FY8cRBsj9UWjJQswy").collection("PersonalActivity")
@@ -85,7 +85,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               color: bgColor,
               child: TweetItem(
                 tweetContentslist[index]['id'],
-                "UserName",
+                tweetContentslist[index]['personId'],
                 'images/kkrn_icon_user_1.png',
                 tweetContentslist[index]['contents']
               )

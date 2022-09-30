@@ -11,10 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 
 class TweetItem extends ConsumerStatefulWidget {
-  TweetItem(this.id, this.title, this.image, this.text, {Key? key}) : super(key: key);
+  TweetItem(this.id, this.personId, this.image, this.text, {Key? key}) : super(key: key);
 
     String id;
-    String title;
+    String personId;
     String image;
     String text;
 
@@ -28,11 +28,27 @@ class _TweetItemState extends ConsumerState<TweetItem> {
   List<dynamic> receivedEmotions = [];
   int emotionCount = 0;
   bool currentUserLikes = false;
+  String username = "";
 
   @override
   void initState() {
     super.initState();
+    _getUserInfo();
     _load();
+  }
+
+  Future<void> _getUserInfo() async {
+    final firestore = ref.read(firebaseFirestoreProvider);
+    var documentSnapShot = await firestore.collection("Organization")
+      .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
+      .doc("nDqwJANhr1evjCBu5Ije").collection("Person")
+      .doc(widget.personId).get();
+    if(documentSnapShot.exists) {
+      final data = documentSnapShot.data();
+      setState(() {
+        username = data!["name"];
+      });
+    }
   }
 
   Future<void> _load() async {
@@ -116,7 +132,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
           context,
           MaterialPageRoute(builder: ((context) => TweetDetails(
             widget.id,
-            widget.title,
+            username,
             widget.text,
             'images/kkrn_icon_user_1.png',
             ))
@@ -165,7 +181,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                               Container(
                                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
                                 child: Text(
-                                  widget.title,
+                                  username,
                                   // style: GoogleFonts.alice(
                                   style: const TextStyle(
                                     color: Colors.white,
