@@ -1,22 +1,24 @@
 
 
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:apikicker/main.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 
-class ReplyList extends StatefulWidget {
+class ReplyList extends ConsumerStatefulWidget {
   const ReplyList(this.id, {Key? key}) : super(key: key);
 
   final String id;
 
   @override
-  State<ReplyList> createState() => _ReplyListState();
+  _ReplyListState createState() => _ReplyListState();
 
 }
 
-class _ReplyListState extends State<ReplyList> {
+class _ReplyListState extends ConsumerState<ReplyList> {
 
   String debugReplyListData = "";
   List<dynamic> replyList = [];
@@ -28,13 +30,26 @@ class _ReplyListState extends State<ReplyList> {
   }
 
   Future<void> _load() async{
-    var requestParams = <String, String?> {
-      "id": widget.id,
-    };
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocReplyGet');
-    final results = await callable(requestParams);
+    final firestore = ref.read(firebaseFirestoreProvider);
+    var querySnapShot= await firestore.collection("Organization")
+      .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
+      .doc("nDqwJANhr1evjCBu5Ije").collection("Activity")
+      .doc("vD3FY8cRBsj9UWjJQswy").collection("PersonalActivity")
+      .orderBy('createdAt', descending: true)
+      .where("isReplyToActivity", isEqualTo: true).where("replyActivityId", isEqualTo: widget.id).get();
+
+    List<dynamic> tempReplyList = [];
+    querySnapShot.docs.forEach( (doc) {
+      // ドキュメントIDをそれぞれのツイートに含める
+      Map<String, dynamic> replyInfo = 
+          {
+            "id": doc.id,
+          };
+      replyInfo.addAll(doc.data());
+      tempReplyList.add(replyInfo);
+    });
     setState(() {
-      replyList = results.data;
+      replyList = tempReplyList;
     });
   }
 

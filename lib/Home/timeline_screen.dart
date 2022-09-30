@@ -38,6 +38,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
       .orderBy('createdAt', descending: true)
       .where("isReplyToActivity", isEqualTo: false).get();
 
+    List<dynamic> tempTweetList = [];
     querySnapShot.docs.forEach( (doc) {
       // ドキュメントIDをそれぞれのツイートに含める
       Map<String, dynamic> tweetInfo = 
@@ -45,9 +46,10 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             "id": doc.id,
           };
       tweetInfo.addAll(doc.data());
-      setState(() {
-        tweetContentslist.add(tweetInfo);
-      });
+      tempTweetList.add(tweetInfo);
+    });
+    setState(() {
+      tweetContentslist = tempTweetList;
     });
   }
 
