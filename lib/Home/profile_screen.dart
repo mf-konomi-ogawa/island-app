@@ -63,7 +63,6 @@ class ProfileScreen extends StatelessWidget {
                       "中央揃えですが変えてもいいかも。"),
                 ]),
               ),
-
               //スクロールしたら上にとどまる要素(タブ)
               SliverPersistentHeader(
                 pinned: true,

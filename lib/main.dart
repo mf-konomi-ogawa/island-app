@@ -46,6 +46,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'island develop',
+    theme: ThemeData.light(),
+    darkTheme: ThemeData.dark(),
+    themeMode: ThemeMode.system,
     home: StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -62,14 +65,4 @@ class MyApp extends StatelessWidget {
       },
     ),
   );
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //     title: 'island API Kicker',
-  //     theme: ThemeData.light(),
-  //     darkTheme: ThemeData.dark(),
-  //     themeMode: ThemeMode.system,
-  //     home: const WelcomePage(),
-  //   );
-  // }
 }
