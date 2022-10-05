@@ -1,7 +1,9 @@
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Home/tweet_details.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:apikicker/Auth/login.dart';
 
 const _tabs = [
   '投稿',
@@ -30,8 +32,15 @@ class ProfileScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             /*ログアウトアイコン*/
-            onPressed: () {
-              // Pressed Action
+            onPressed: () async{
+              await FirebaseAuth.instance.signOut();
+              await Navigator.of(context)
+                    .pushReplacement(MaterialPageRoute(builder: (context) {
+                return WelcomePage();
+              }));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('ログアウトしました。')),
+              );
             },
           ),
         ],
