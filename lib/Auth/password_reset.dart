@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apikicker/Header/header.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:apikicker/Common/color_settings.dart';
 
 /* パスワードリセット画面 */
 class ResetPasswordForm extends StatefulWidget {
@@ -17,6 +18,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -38,7 +40,10 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 width: double.infinity,
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "メールアドレス"),
+                  decoration: const InputDecoration(
+                    labelText: "メールアドレス",
+                    labelStyle: TextStyle( color: textColor ),
+                  ),
                   onChanged: (String value) {
                     setState(() {
                       resetEmail = value;
@@ -48,16 +53,10 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
               ),
               SizedBox(height: 40),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
                 width: double.infinity,
+                decoration: gradationButton,
                 // リセットボタン
                 child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
                   onPressed: () async {
                     try {
                       final result = await FirebaseAuth.instance.sendPasswordResetEmail(email: resetEmail);
@@ -99,7 +98,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
                     style: Theme.of(context)
                         .textTheme
                         .button!
-                        .copyWith(color: Colors.black, fontSize: 20),
+                        .copyWith(color: textColor, fontSize: 20),
                   ),
                 ),
               ),

@@ -10,7 +10,7 @@ class _HeaderTitle extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: Image.asset('images/lodo_island_transparent_medium.png'),
+          child: Image.asset('images/header/header_island_logo.png'),
         ),
         SizedBox(height: 32),
       ],
@@ -28,7 +28,7 @@ class Header extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: EdgeInsets.only(top: 32,left:16,right:16),
+              padding: EdgeInsets.only(top: 0,left:0,right:0),
               child: _HeaderTitle(),
             ),
           ),

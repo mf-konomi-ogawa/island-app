@@ -17,6 +17,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -52,17 +53,23 @@ class LoginForm extends ConsumerWidget {
     return Column(
       children: <Widget>[
         TextFormField(
-//          controller: TextEditingController( text: "ryo_usagawa@mforce.co.jp" ), // デバッグ用初期値
-          decoration: const InputDecoration(labelText: "メールアドレス"),
+          decoration: const InputDecoration(
+              labelText: "メールアドレス",
+              labelStyle: TextStyle( color: textColor ),
+          ),
+          style: TextStyle( color: textColor ),
           textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
-          autofocus: true, // 画面開いた際に自動でフォーカスするように設定
           onChanged: (String value) {
             // Providerから値を更新
             emailStateController.state = value;
           },
         ),
         TextFormField(
-          decoration: const InputDecoration(labelText: "パスワード"),
+          decoration: const InputDecoration(
+            labelText: "パスワード",
+            labelStyle: TextStyle( color: textColor ),
+          ),
+          style: TextStyle( color: textColor ),
           obscureText: true,
           onChanged: (String value) {
             passwordStateController.state = value;
@@ -90,17 +97,11 @@ class LoginForm extends ConsumerWidget {
             ),
         ),
         const SizedBox(height: 32),
-        SizedBox(
+        Container(
           width: double.infinity,
+          decoration: gradationButton,
           // ログインボタン
           child: TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: textColor,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
             focusNode: _loginFocusNode,
             onPressed: () async {
               // ログイン
@@ -137,7 +138,7 @@ class LoginForm extends ConsumerWidget {
               style: Theme.of(context)
                   .textTheme
                   .button!
-                  .copyWith(color: Colors.black, fontSize: 20),
+                  .copyWith(color: textColor, fontSize: 20),
             ),
           ),
         ),
