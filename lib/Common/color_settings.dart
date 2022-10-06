@@ -36,15 +36,9 @@ const BoxDecoration gradationBox = BoxDecoration(
 );
 
 BoxDecoration gradationButton = BoxDecoration(
-  borderRadius: BorderRadius.circular(20.0),
-  gradient: const LinearGradient(
-    begin: FractionalOffset.topLeft,
-    end: FractionalOffset.bottomRight,
-    colors: [
-      Color(0xff5319bf),
-      Color(0xff19cdff),
-      Color(0xffff40b3),
-      Color(0xffffe3bc),
-    ],
+  borderRadius: BorderRadius.circular(12.0), //角の丸み
+  image: const DecorationImage(
+    image: AssetImage('images/button/button_background_image.png'),
+    fit: BoxFit.cover,
   ),
 );

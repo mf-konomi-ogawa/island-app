@@ -39,6 +39,7 @@ flutter:
     - images/icon_image/
     - images/header/
     - images/splash/
+    - images/button/
 
 flutter_native_splash:
   image: "images/splash/splash_island_logo.png"

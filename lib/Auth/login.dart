@@ -97,50 +97,55 @@ class LoginForm extends ConsumerWidget {
             ),
         ),
         const SizedBox(height: 32),
-        Container(
-          width: double.infinity,
-          decoration: gradationButton,
-          // ログインボタン
-          child: TextButton(
-            focusNode: _loginFocusNode,
-            onPressed: () async {
-              // ログイン
-              final FirebaseAuthResultStatus result = await signInEmail(
-                email , password,
-              );
-              if( result == FirebaseAuthResultStatus.Successful ) {
-                // ログイン成功
-                // タイムライン画面に遷移＋ログイン画面を破棄
-                await Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) {
-                    return const Home();
-                  }),
-                );
-              } else {
-                final errorMessage = exceptionMessage(result);
-                // ログイン失敗
-                Flushbar(
-                    title : "失敗しました" ,
-                    message : "ログインに失敗しました：$errorMessage" ,
-                    backgroundColor: Colors.redAccent,
-                    margin: const EdgeInsets.all(8),
-                    borderRadius: BorderRadius.circular(8),
-                    duration:  const Duration(seconds: 4),
-                    icon: const Icon(
-                      Icons.info_outline,
-                      color: Colors.black,
-                    )
-                ).show(context);
-              }
-            },
-            child: Text(
-              'ログイン',
-              style: Theme.of(context)
-                  .textTheme
-                  .button!
-                  .copyWith(color: textColor, fontSize: 20),
+        MaterialButton(
+          focusNode: _loginFocusNode,
+          splashColor: accentColor,
+          padding: EdgeInsets.all(2.0),
+          textColor: textColor,
+          child: Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            decoration: gradationButton,
+            child: const Padding(
+              padding: EdgeInsets.all(12.0), // ボタンの大きさ
+              child: Text(
+                  "ログイン",
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
             ),
           ),
+          onPressed: () async {
+            // ログイン
+            final FirebaseAuthResultStatus result = await signInEmail(
+              email , password,
+            );
+            if( result == FirebaseAuthResultStatus.Successful ) {
+              // ログイン成功
+              // タイムライン画面に遷移＋ログイン画面を破棄
+              await Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) {
+                  return const Home();
+                }),
+              );
+            } else {
+              final errorMessage = exceptionMessage(result);
+              // ログイン失敗
+              Flushbar(
+                  title : "失敗しました" ,
+                  message : "ログインに失敗しました：$errorMessage" ,
+                  backgroundColor: Colors.redAccent,
+                  margin: const EdgeInsets.all(8),
+                  borderRadius: BorderRadius.circular(8),
+                  duration:  const Duration(seconds: 4),
+                  icon: const Icon(
+                    Icons.info_outline,
+                    color: Colors.black,
+                  )
+              ).show(context);
+            }
+          },
         ),
         const SizedBox(height: 36),
       ],
