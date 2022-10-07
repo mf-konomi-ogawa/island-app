@@ -2,17 +2,20 @@ import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Home/reply_form.dart';
 import 'package:apikicker/Home/reply_list.dart';
 import 'package:apikicker/Home/tweet_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:apikicker/Common/timeago.dart';
 
 class TweetDetails extends StatelessWidget {
-  TweetDetails(this.id, this.title, this.text, this.image, {Key? key}) : super(key: key);
+  TweetDetails(this.id, this.title, this.text, this.image, this.timeago, {Key? key}) : super(key: key);
 
   String id = "";
   String title = "";
   String text = "";
   String image = '';
+  Timestamp timeago;
 
   // TweetDetails(this.name);
 
@@ -37,7 +40,8 @@ class TweetDetails extends StatelessWidget {
               title,
               Image.asset(image,
                   scale: 30, width: 50, height: 50, fit: BoxFit.cover),
-              text
+              text,
+              timeago
           ),
           Flexible(
             child: ReplyList(
@@ -69,7 +73,7 @@ class TweetDetails extends StatelessWidget {
   }
 
   //投稿の詳細
-  Widget _detail(String? id, String title, Image image, String text) {
+  Widget _detail(String? id, String title, Image image, String text , Timestamp timeago) {
     return GestureDetector(
       //コンテナの中に配置していく
       child: Container(
@@ -110,8 +114,8 @@ class TweetDetails extends StatelessWidget {
                     // 投稿時間表示(今から数えた時間が表示される)
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
-                      child: const Text(
-                        '５分前',
+                      child: Text(
+                        createTimeAgoString(timeago.toDate()),
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12.0,

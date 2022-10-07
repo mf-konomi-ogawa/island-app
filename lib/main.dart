@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:apikicker/Home/home.dart';
+import 'package:timeago/timeago.dart' as timeAgo;
 
 // ユーザー情報の受け渡しを行うためのProvider
 final userProvider = StateProvider((ref) {
@@ -31,6 +32,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  timeAgo.setLocaleMessages("ja", timeAgo.JaMessages()); // 投稿時間などの設定用ライブラリを設定
   runApp(
     // Riverpodでデータを受け渡しできる状態にする
     const ProviderScope(

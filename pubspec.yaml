@@ -18,12 +18,17 @@ dependencies:
   firebase_auth: ^3.7.0
   cloud_firestore: ^3.4.6
   cloud_functions: ^3.3.6
+
   another_flushbar: ^1.10.29
+
   like_button: ^2.0.4
+
   provider: ^6.0.3
   flutter_riverpod: ^1.0.3
 
   flutter_native_splash: ^2.2.10
+
+  timeago: ^3.3.0
 
 dev_dependencies:
   flutter_test:

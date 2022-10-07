@@ -1,6 +1,7 @@
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Home/tweet_details.dart';
 import 'package:apikicker/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +10,16 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
+import 'package:apikicker/Common/timeago.dart';
 
 class TweetItem extends ConsumerStatefulWidget {
-  TweetItem(this.id, this.personId, this.image, this.text, {Key? key}) : super(key: key);
+  TweetItem(this.id, this.personId, this.image, this.text, this.timeago, {Key? key}) : super(key: key);
 
     String id;
     String personId;
     String image;
     String text;
+    Timestamp timeago;
 
   @override
   _TweetItemState createState() => _TweetItemState();
@@ -29,6 +32,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
   int emotionCount = 0;
   bool currentUserLikes = false;
   String username = "";
+  String timeago = "";
 
   @override
   void initState() {
@@ -135,12 +139,13 @@ class _TweetItemState extends ConsumerState<TweetItem> {
             username,
             widget.text,
             'images/kkrn_icon_user_1.png',
+            widget.timeago
             ))
           )
         );
       },
       child: Container(
-        padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 2),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
@@ -191,16 +196,16 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                               ),
 
                               //投稿時間表示(今から数えた時間が表示される)
-                              // Container(
-                              //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
-                              //   child: const Text(
-                              //     '５分前',
-                              //     style: TextStyle(
-                              //       color: Colors.grey,
-                              //       fontSize: 12.0,
-                              //     ),
-                              //   ),
-                              // ),
+                              Container(
+                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                                child: Text(
+                                  createTimeAgoString(widget.timeago.toDate()),
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                              ),
 
                               const Spacer(),
                               

@@ -67,7 +67,7 @@ class _ReplyListState extends ConsumerState<ReplyList> {
             return GestureDetector(
           //コンテナの中に配置していく
               child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 2),
                 // alignment: Alignment.topLeft,
                 decoration: const BoxDecoration(
                     color: bgColor2,

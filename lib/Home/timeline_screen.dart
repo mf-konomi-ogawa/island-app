@@ -87,7 +87,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                 tweetContentslist[index]['id'],
                 tweetContentslist[index]['personId'],
                 'images/kkrn_icon_user_1.png',
-                tweetContentslist[index]['contents']
+                tweetContentslist[index]['contents'],
+                tweetContentslist[index]['createdAt'],
               )
             );
           },
