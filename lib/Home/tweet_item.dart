@@ -145,7 +145,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
         );
       },
       child: Container(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 2),
+        padding: const EdgeInsets.fromLTRB(4, 10, 10, 2),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
@@ -184,7 +184,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                             children: <Widget>[
                               //ユーザー名
                               Container(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                                padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
                                 child: Text(
                                   username,
                                   // style: GoogleFonts.alice(
@@ -245,7 +245,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
 
                         //テキスト(投稿本文)
                         Container(
-                          padding: const EdgeInsets.fromLTRB(10, 2, 10, 10),
+                          padding: const EdgeInsets.fromLTRB(4, 2, 10, 10),
                           child: Text(
                             widget.text,
                             style: const TextStyle(
@@ -264,7 +264,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                               //ハート
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                const EdgeInsets.fromLTRB(0, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: emotionCount,
                                 //アニメーションで変化するときの色
