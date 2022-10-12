@@ -35,7 +35,7 @@ class _ReplyListState extends ConsumerState<ReplyList> {
       .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
       .doc("nDqwJANhr1evjCBu5Ije").collection("Activity")
       .doc("vD3FY8cRBsj9UWjJQswy").collection("PersonalActivity")
-      .orderBy('createdAt', descending: true)
+      .orderBy('createdAt', descending: false)
       .where("isReplyToActivity", isEqualTo: true).where("replyActivityId", isEqualTo: widget.id).get();
 
     List<dynamic> tempReplyList = [];
