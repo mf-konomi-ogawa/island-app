@@ -5,19 +5,89 @@ import 'package:apikicker/Home/tweet_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'package:apikicker/Common/timeago.dart';
+import 'package:apikicker/Repository/delete_personal_activity.dart';
 
-class TweetDetails extends StatelessWidget {
-  TweetDetails(this.id, this.title, this.text, this.image, this.timeago, {Key? key}) : super(key: key);
+class TweetDetails extends ConsumerStatefulWidget {
+  TweetDetails(this.id, this.title, this.image, this.text, this.timeago, {Key? key}) : super(key: key);
 
-  String id = "";
-  String title = "";
-  String text = "";
-  String image = '';
+  String id;
+  String title;
+  String image;
+  String text;
   Timestamp timeago;
 
+  @override
+  _TweetDetailsState createState() => _TweetDetailsState();
+}
+
+class _TweetDetailsState extends ConsumerState<TweetDetails> {
+  String id = "";
+  String title = "";
+  String image = '';
+  String text = "";
+  String timeago = "";
+
   // TweetDetails(this.name);
+
+  String? dropdownValue = "ツイートを削除";
+  List<String> dropdownItems = [ "ツイートを削除" ];
+
+  void _controlDialog(documentId, dropdownValue) {
+    if(dropdownValue == "ツイートを削除") {
+      _showAlertDialog(documentId);
+    }
+  }
+
+  void _showAlertDialog(documentId) async {
+    BuildContext innerContext;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        innerContext = context;
+        return AlertDialog(
+          backgroundColor: bgColor,
+          title: const Text('ツイートを削除しますか？'),
+          titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0
+          ),
+          titlePadding: const EdgeInsets.all(10),
+          actions: [
+            Center(
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: buttonColor,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      deletePersonalActivity(documentId);
+                      Navigator.pop(innerContext);
+                    },
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: buttonColor2,
+                    ),
+                    child: const Text('キャンセル'),
+                    onPressed: () {
+                      Navigator.pop(innerContext);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    // setState(() => _setResultString(result));
+  }
 
   @override
   //タイムラインのコンテンツ部分
@@ -36,16 +106,16 @@ class TweetDetails extends StatelessWidget {
       body: Column(
         children: [
           _detail(
-              id,
-              title,
-              Image.asset(image,
+              widget.id,
+              widget.title,
+              Image.asset(widget.image,
                   scale: 30, width: 50, height: 50, fit: BoxFit.cover),
-              text,
-              timeago
+              widget.text,
+              widget.timeago
           ),
           Flexible(
             child: ReplyList(
-              id,
+              widget.id,
             ),
           )
         ],
@@ -125,15 +195,40 @@ class TweetDetails extends StatelessWidget {
 
                     const Spacer(),
                     /*クリップアイコンを右端に寄せるための記述*/
-                    
+
+                    // メニューボタン
                     Container(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: const Icon(
-                                    Icons.more_horiz,
-                                    size: 18,
-                                    color: Colors.grey
-                                )
-                              ),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: DropdownButton<String>(
+                          // value: dropdownValue,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                            });
+                          },
+                          dropdownColor: bgColor,
+                          style: const TextStyle(
+                              color: Colors.white
+                          ),
+                          items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                                onTap: () {
+                                  _controlDialog(widget.id, dropdownValue);
+                                }
+                            );
+                          }).toList(),
+                          icon: const Icon(
+                              Icons.more_horiz,
+                              size: 18,
+                              color: Colors.grey
+                          ),
+                          underline: Container(
+                            height: 0,
+                          ),
+                        )
+                    ),
                   ]),
 
               //テキスト(投稿本文)

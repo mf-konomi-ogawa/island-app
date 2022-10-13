@@ -11,6 +11,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'package:apikicker/Common/timeago.dart';
+import 'package:apikicker/Repository/delete_personal_activity.dart';
 
 class TweetItem extends ConsumerStatefulWidget {
   TweetItem(this.id, this.personId, this.image, this.text, this.timeago, {Key? key}) : super(key: key);
@@ -100,7 +101,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                     ),
                     child: const Text('OK'),
                     onPressed: () {
-                      _deletePersonalActivity(documentId);
+                      deletePersonalActivity(documentId);
                       Navigator.pop(innerContext);
                     },
                   ),
@@ -123,11 +124,6 @@ class _TweetItemState extends ConsumerState<TweetItem> {
     // setState(() => _setResultString(result));
   }
 
-  void _deletePersonalActivity(personalActivityId) async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
-    final results = await callable(personalActivityId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -137,8 +133,8 @@ class _TweetItemState extends ConsumerState<TweetItem> {
           MaterialPageRoute(builder: ((context) => TweetDetails(
             widget.id,
             username,
-            widget.text,
             'images/kkrn_icon_user_1.png',
+            widget.text,
             widget.timeago
             ))
           )
