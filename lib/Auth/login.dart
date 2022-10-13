@@ -9,6 +9,7 @@ import 'package:apikicker/Auth/firebase_auth_error.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:apikicker/Common/loading_icon.dart';
 
 /* ログイン画面 */
 class WelcomePage extends StatelessWidget {
@@ -49,7 +50,6 @@ class LoginForm extends ConsumerWidget {
     final email = ref.watch(emailProvider);
     final passwordStateController = ref.watch(passwordProvider.notifier);
     final password = ref.watch(passwordProvider);
-
     return Column(
       children: <Widget>[
         TextFormField(
@@ -147,7 +147,6 @@ class LoginForm extends ConsumerWidget {
             }
           },
         ),
-        const SizedBox(height: 36),
       ],
     );
   }

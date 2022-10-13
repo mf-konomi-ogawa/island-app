@@ -131,7 +131,7 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
               return Container(
                 height: 500,
                 color: bgColor2,
-                child: ReplyForm(id)
+                child: ReplyForm(widget.id)
               );
             },
           );
