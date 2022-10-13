@@ -193,7 +193,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
 
                               //投稿時間表示(今から数えた時間が表示される)
                               Container(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                                padding: const EdgeInsets.fromLTRB(8, 0, 0, 2),
                                 child: Text(
                                   createTimeAgoString(widget.timeago.toDate()),
                                   style: TextStyle(

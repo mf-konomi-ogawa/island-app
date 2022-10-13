@@ -30,8 +30,6 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
   String text = "";
   String timeago = "";
 
-  // TweetDetails(this.name);
-
   String? dropdownValue = "ツイートを削除";
   List<String> dropdownItems = [ "ツイートを削除" ];
 
@@ -147,21 +145,22 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
     return GestureDetector(
       //コンテナの中に配置していく
       child: Container(
-        // alignment: Alignment.topLeft,
-        padding: const EdgeInsets.fromLTRB(10, 10, 15, 2),
+        padding: const EdgeInsets.fromLTRB(2, 10, 2, 2),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
         //（アイコン）（ユーザー名・投稿）を縦に並べる
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             /*上揃えにする*/
             children: <Widget>[
-              Row(crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   /*左揃えにする*/
                   children: <Widget>[
+                    // ユーザーアイコン
                     Container(
                       margin: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-
                       //画像を丸型にする。サイズ感は画像読み込むところで行う
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
@@ -170,7 +169,7 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
 
                     //ユーザー名
                     Container(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                      padding: const EdgeInsets.fromLTRB(4, 0, 0, 2),
                       child: Text(
                         title,
                         style: const TextStyle(
@@ -183,7 +182,7 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
 
                     // 投稿時間表示(今から数えた時間が表示される)
                     Container(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 2),
+                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 2),
                       child: Text(
                         createTimeAgoString(timeago.toDate()),
                         style: TextStyle(
