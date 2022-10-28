@@ -94,7 +94,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           },
         ),
       ),
-       // 投稿ボタン
+      // 投稿ボタン
       floatingActionButton : FloatingActionButton(
         child: Container(
           decoration: gradationBox,

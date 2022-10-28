@@ -74,7 +74,8 @@ class TweetForm extends ConsumerWidget {
                   //投稿ボタン
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, '/');
+//                      Navigator.of(context).pop();
                     },
                     child: Container(
                       height: 38,

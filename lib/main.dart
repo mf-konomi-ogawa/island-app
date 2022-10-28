@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:apikicker/Home/home.dart';
 import 'package:timeago/timeago.dart' as timeAgo;
+import 'package:apikicker/Home/timeline_screen.dart';
 
 // ユーザー情報の受け渡しを行うためのProvider
 final userProvider = StateProvider((ref) {
@@ -48,6 +49,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'island develop',
+    initialRoute: '/', // 初期画面を'/'とする
+    routes: {
+      '/TimelineScreen': (context) => TimelineScreen(),
+    },
     theme: ThemeData.light(),
     darkTheme: ThemeData.dark(),
     themeMode: ThemeMode.system,
