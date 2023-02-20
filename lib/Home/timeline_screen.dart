@@ -1,15 +1,13 @@
-import 'package:another_flushbar/flushbar.dart';
-import 'package:apikicker/Home/tweet_details.dart';
 import 'package:apikicker/Home/tweet_form.dart';
 import 'package:apikicker/Home/tweet_item.dart';
 import 'package:apikicker/main.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:apikicker/Common/color_settings.dart';
+import 'package:apikicker/Common/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'dart:developer' as developer;
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 
 class TimelineScreen extends ConsumerStatefulWidget {
   const TimelineScreen({Key? key}) : super(key: key);
@@ -19,9 +17,8 @@ class TimelineScreen extends ConsumerStatefulWidget {
 }
 
 class _TimelineScreenState extends ConsumerState<TimelineScreen> {
-
-  String debugTimelineData = "";
-  List<dynamic> tweetContentslist = [];
+  List<dynamic> tweetContentslist = []; // アクティビティの内容
+  String ownUserName = ''; // 自身のユーザー名
 
   @override
   void initState() {
@@ -29,87 +26,146 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     _load();
   }
 
-  Future<void> _load() async{
+  Future<String> _load() async {
     final firestore = ref.read(firebaseFirestoreProvider);
-    var querySnapShot = await firestore.collection("Organization")
-      .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
-      .doc("nDqwJANhr1evjCBu5Ije").collection("Activity")
-      .doc("vD3FY8cRBsj9UWjJQswy").collection("PersonalActivity")
-      .orderBy('createdAt', descending: true)
-      .where("isReplyToActivity", isEqualTo: false).get();
 
+    // アクティビティ取得
+    var querySnapShot = await firestore
+        .collection("Organization")
+        .doc("IXtqjP5JvAM2mdj0cntd")
+        .collection("space")
+        .doc("nDqwJANhr1evjCBu5Ije")
+        .collection("Activity")
+        .doc("vD3FY8cRBsj9UWjJQswy")
+        .collection("PersonalActivity")
+        .orderBy('createdAt', descending: true)
+        .where("isReplyToActivity", isEqualTo: false)
+        .get();
+
+    // ユーザー情報取得
+    var userDocumentSnapShot = await firestore
+        .collection("Organization")
+        .doc("IXtqjP5JvAM2mdj0cntd")
+        .collection("space")
+        .doc("nDqwJANhr1evjCBu5Ije")
+        .collection("Person")
+        .get();
+    List<dynamic> tempUserList = [];
+    userDocumentSnapShot.docs.forEach((doc) {
+      Map<String, dynamic> userInfo = {"id": doc.id};
+      userInfo.addAll(doc.data());
+      tempUserList.add(userInfo);
+    });
+
+    // 自身のユーザー名を取得
+    var usernameDocumentSnapShot = await firestore
+        .collection("Organization")
+        .doc("IXtqjP5JvAM2mdj0cntd")
+        .collection("space")
+        .doc("nDqwJANhr1evjCBu5Ije")
+        .collection("Person")
+        .doc(ref.watch(userProvider)?.uid)
+        .get();
+    var ownUser = usernameDocumentSnapShot.data();
+    ownUserName = ownUser!['name'];
+
+    // タイムライン情報の設定
     List<dynamic> tempTweetList = [];
-    querySnapShot.docs.forEach( (doc) {
+    String tempUserName = "";
+    String tempPhotoUri = "";
+    querySnapShot.docs.forEach((doc) {
+      // タイムライン情報にユーザー情報を紐づける
+      for (int i = 0; i < tempUserList.length; i++) {
+        if (tempUserList[i]['id'] == doc.data()['personId']) {
+          tempUserName = tempUserList[i]['name'];
+          tempPhotoUri = tempUserList[i]['photoUri'];
+        }
+      }
       // ドキュメントIDをそれぞれのツイートに含める
-      Map<String, dynamic> tweetInfo = 
-          {
-            "id": doc.id,
-          };
+      Map<String, dynamic> tweetInfo = {
+        "id": doc.id,
+        "username": tempUserName,
+        "photoUri": tempPhotoUri,
+      };
       tweetInfo.addAll(doc.data());
       tempTweetList.add(tweetInfo);
     });
+
+    // tweetContentslist にタイムライン情報とユーザー情報を詰める
     setState(() {
       tweetContentslist = tempTweetList;
     });
-  }
 
-  void _showTopFlushbar() {
-      Flushbar(
-        title : "ツイート投稿" ,
-        message : "ツイートを投稿しました。" ,
-        flushbarPosition: FlushbarPosition.TOP,
-        backgroundColor: Colors.blueAccent,
-        margin: const EdgeInsets.all(8),
-        borderRadius: BorderRadius.circular(8),
-        duration:  const Duration(seconds: 3),
-        isDismissible: true,
-        icon: const Icon(
-          Icons.info_outline,
-          color: Colors.white,
-        )
-      ).show(context);
+    return "Data Loaded";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      body: RefreshIndicator(
-        onRefresh: () async{
-          await _load();
-        },
-        child : ListView.builder(
-          itemCount: tweetContentslist.length,
-          itemBuilder: ( BuildContext context , int index ){
-            return Card(
-              color: bgColor,
-              child: TweetItem(
-                tweetContentslist[index]['id'],
-                tweetContentslist[index]['personId'],
-                'images/kkrn_icon_user_1.png',
-                tweetContentslist[index]['contents'],
-                tweetContentslist[index]['createdAt'],
-              )
-            );
-          },
+      appBar: AppBar(
+        backgroundColor: bgColor2,
+        elevation: 0,
+        title: Image.asset(
+          'images/app_icon/island_app_icon_transparent.png',
+          height: 32,
+          width: 32,
         ),
       ),
+      body: RefreshIndicator(
+          onRefresh: () async {
+            await _load();
+          },
+          child: FutureBuilder<String>(
+            future: _load(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                // ロード終了
+                return ListView.builder(
+                  itemCount: tweetContentslist.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                        color: bgColor,
+                        child: TweetItem(
+                          tweetContentslist[index]['id'],
+                          tweetContentslist[index]['personId'],
+                          'images/kkrn_icon_user_1.png',
+                          tweetContentslist[index]['contents'],
+                          tweetContentslist[index]['createdAt'],
+                          tweetContentslist[index]['username'],
+                          tweetContentslist[index]['photoUri'],
+                        ));
+                  },
+                );
+              } else if (snapshot.hasError) {
+                // ロード失敗
+                return const Text("読み込みに失敗");
+              } else {
+                // ロード中
+                return const Center(
+                    child:CircularProgressIndicator(),
+                );
+              }
+            },
+          )
+      ),
       // 投稿ボタン
-      floatingActionButton : FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: buttonColor,
         child: Container(
-          decoration: gradationBox,
+          // decoration: gradationBox,
           child: const Icon(Icons.edit),
           padding: const EdgeInsets.all(17.0),
         ),
         onPressed: () async {
           final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return TweetForm();
+              return TweetForm(ownUserName);
             }),
           );
           if (results != null) {
-            _load();
-            _showTopFlushbar();
+            showTopFlushbarFromActivity(
+                "投稿", "アクティビティを投稿しました。", context);
           }
         },
       ),

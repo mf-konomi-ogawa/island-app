@@ -28,7 +28,7 @@ class Header extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: EdgeInsets.only(top: 0,left:0,right:0),
+              padding: EdgeInsets.only(top: 0, left: 0, right: 0),
               child: _HeaderTitle(),
             ),
           ),

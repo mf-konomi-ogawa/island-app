@@ -1,18 +1,26 @@
 import 'package:apikicker/main.dart';
 import 'package:flutter/material.dart';
+import 'package:apikicker/Common/flushbar.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:developer' as developer;
 
-class ReplyForm extends ConsumerWidget {
-  ReplyForm(this.id, {Key? key}) : super(key: key);
+class ReplyForm extends ConsumerStatefulWidget {
+  ReplyForm(this.id, this.username, {Key? key}) : super(key: key);
 
   String id = "";
+  String username = "";
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var tweetContent = <String, String?> {
-      "id": id,
+  _ReplyFormState createState() => _ReplyFormState();
+}
+
+class _ReplyFormState extends ConsumerState<ReplyForm> {
+  @override
+  Widget build(BuildContext context) {
+    var tweetContent = <String, String?>{
+      "id": widget.id,
       "uid": ref.watch(userProvider)?.uid,
       "value": "",
     }; // ツイート投稿用
@@ -40,14 +48,14 @@ class ReplyForm extends ConsumerWidget {
   }
 
   //カードアイテム
-  Widget _cardItem( BuildContext context, Map tweetContent ) {
+  Widget _cardItem(BuildContext context, Map tweetContent) {
     return GestureDetector(
       child: Card(
         margin: const EdgeInsets.all(10),
         color: bgColor2,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20) /*角の丸み*/
-        ),
+            ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 10, 15, 2),
 
@@ -81,16 +89,18 @@ class ReplyForm extends ConsumerWidget {
                     },
                     child: Container(
                       height: 38,
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        gradient: gColor,
-
+                        // gradient: gColor,
                       ),
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocReplyAdd');
-                          final results = await callable( tweetContent );
+                          HttpsCallable callable = FirebaseFunctions.instance
+                              .httpsCallable('pocReplyAdd');
+                          final results = await callable(tweetContent);
                           Navigator.of(context).pop(results);
+                          showTopFlushbarFromActivity(
+                              "返信", "アクティビティに返信しました。", context);
                         },
                         label: const Text(
                           '投稿する',
@@ -100,7 +110,8 @@ class ReplyForm extends ConsumerWidget {
                           ),
                         ),
                         icon: const Icon(Icons.create, size: 20),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: buttonColor),
                       ),
                     ),
                     // ),
@@ -116,9 +127,9 @@ class ReplyForm extends ConsumerWidget {
                   ),
                   Container(
                     margin: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                    child: const Text(
-                      'testname',
-                      style: TextStyle(
+                    child: Text(
+                      widget.username,
+                      style: const TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
                       ),

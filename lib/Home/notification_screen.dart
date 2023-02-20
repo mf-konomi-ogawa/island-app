@@ -29,7 +29,7 @@ class NotificationScreen extends StatelessWidget {
               color: bgColor2,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20) /*角の丸み*/
-              ),
+                  ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,13 +359,10 @@ class NotificationScreen extends StatelessWidget {
                               /*クリップアイコンを右端に寄せるための記述*/
 
                               Container(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: const Icon(
-                                    Icons.more_horiz,
-                                    size: 18,
-                                    color: Colors.grey
-                                )
-                              ),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  child: const Icon(Icons.more_horiz,
+                                      size: 18, color: Colors.grey)),
                             ]),
 
                         //あなたへの返信
@@ -401,7 +398,7 @@ class NotificationScreen extends StatelessWidget {
                               //ハート
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: 16,
                                 /*リアクションを押された数*/
@@ -409,7 +406,7 @@ class NotificationScreen extends StatelessWidget {
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   final Color color =
-                                  isLiked ? accentColor : Colors.grey;
+                                      isLiked ? accentColor : Colors.grey;
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(
@@ -440,13 +437,13 @@ class NotificationScreen extends StatelessWidget {
                               //星
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: 2,
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   final Color color =
-                                  isLiked ? accentColor : Colors.grey;
+                                      isLiked ? accentColor : Colors.grey;
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(
@@ -475,13 +472,13 @@ class NotificationScreen extends StatelessWidget {
                               //グッド
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: 20,
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   final Color color =
-                                  isLiked ? accentColor : Colors.grey;
+                                      isLiked ? accentColor : Colors.grey;
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(
@@ -511,13 +508,13 @@ class NotificationScreen extends StatelessWidget {
                               //微笑むように笑う
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: 39,
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   final Color color =
-                                  isLiked ? accentColor : Colors.grey;
+                                      isLiked ? accentColor : Colors.grey;
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(
@@ -547,13 +544,13 @@ class NotificationScreen extends StatelessWidget {
                               //口をあけて笑う
                               LikeButton(
                                 padding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: 8,
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   final Color color =
-                                  isLiked ? accentColor : Colors.grey;
+                                      isLiked ? accentColor : Colors.grey;
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(
@@ -586,7 +583,7 @@ class NotificationScreen extends StatelessWidget {
                             children: <Widget>[
                               Container(
                                 padding:
-                                const EdgeInsets.fromLTRB(15, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(15, 0, 0, 10),
                                 child: const Icon(
                                   Icons.speaker_notes,
                                   size: 25,
@@ -670,11 +667,8 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset(
-                                  'images/icon_image/20211217.jpg',
-                                  width: 35,
-                                  height: 35,
-                                  fit: BoxFit.cover),
+                              Image.asset('images/icon_image/20211217.jpg',
+                                  width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.thumb_up_alt,
                                 color: accentColor,
@@ -685,11 +679,8 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset(
-                                  'images/icon_image/20211218.jpg',
-                                  width: 35,
-                                  height: 35,
-                                  fit: BoxFit.cover),
+                              Image.asset('images/icon_image/20211218.jpg',
+                                  width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.sentiment_satisfied_alt,
                                 color: accentColor,
@@ -712,11 +703,8 @@ class NotificationScreen extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             child: _iconItem(
-                              Image.asset(
-                                  'images/icon_image/20220208.jpg',
-                                  width: 35,
-                                  height: 35,
-                                  fit: BoxFit.cover),
+                              Image.asset('images/icon_image/20220208.jpg',
+                                  width: 35, height: 35, fit: BoxFit.cover),
                               const Icon(
                                 Icons.thumb_up_alt,
                                 color: accentColor,
@@ -762,8 +750,8 @@ class NotificationScreen extends StatelessWidget {
   Widget _iconItem(Image image, Icon icon) {
     return GestureDetector(
       child: Stack(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        /*左揃えにする*/
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          /*左揃えにする*/
           children: <Widget>[
             //ユーザーアイコン
             Container(
@@ -798,8 +786,8 @@ class NotificationScreen extends StatelessWidget {
               // アイコンを差し込む
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(100), child: icon
-                // child:
-              ),
+                  // child:
+                  ),
             ),
           ]),
     );

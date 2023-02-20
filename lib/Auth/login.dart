@@ -54,11 +54,12 @@ class LoginForm extends ConsumerWidget {
       children: <Widget>[
         TextFormField(
           decoration: const InputDecoration(
-              labelText: "メールアドレス",
-              labelStyle: TextStyle( color: textColor ),
+            labelText: "メールアドレス",
+            labelStyle: TextStyle(color: textColor),
           ),
-          style: TextStyle( color: textColor ),
-          textInputAction: TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
+          style: TextStyle(color: textColor),
+          textInputAction:
+              TextInputAction.next, // エンターキー押下後に次のフィールドへフォーカスするように設定
           onChanged: (String value) {
             // Providerから値を更新
             emailStateController.state = value;
@@ -67,9 +68,9 @@ class LoginForm extends ConsumerWidget {
         TextFormField(
           decoration: const InputDecoration(
             labelText: "パスワード",
-            labelStyle: TextStyle( color: textColor ),
+            labelStyle: TextStyle(color: textColor),
           ),
-          style: TextStyle( color: textColor ),
+          style: TextStyle(color: textColor),
           obscureText: true,
           onChanged: (String value) {
             passwordStateController.state = value;
@@ -82,19 +83,19 @@ class LoginForm extends ConsumerWidget {
         const SizedBox(height: 4),
         Align(
           alignment: Alignment.topRight,
-            child: TextButton(
-              // ボタンをクリックした時の処理
-              onPressed: () {
-                // "pop"で前の画面に戻る
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) {
-                    // パスワードリセット画面へ遷移
-                    return ResetPasswordForm();
-                  }),
-                );
-              },
-              child: const Text('パスワードを忘れた'),
-            ),
+          child: TextButton(
+            // ボタンをクリックした時の処理
+            onPressed: () {
+              // "pop"で前の画面に戻る
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  // パスワードリセット画面へ遷移
+                  return ResetPasswordForm();
+                }),
+              );
+            },
+            child: const Text('パスワードを忘れた'),
+          ),
         ),
         const SizedBox(height: 32),
         MaterialButton(
@@ -109,7 +110,7 @@ class LoginForm extends ConsumerWidget {
             child: const Padding(
               padding: EdgeInsets.all(12.0), // ボタンの大きさ
               child: Text(
-                  "ログイン",
+                "ログイン",
                 style: TextStyle(
                   fontSize: 20,
                 ),
@@ -119,9 +120,10 @@ class LoginForm extends ConsumerWidget {
           onPressed: () async {
             // ログイン
             final FirebaseAuthResultStatus result = await signInEmail(
-              email , password,
+              email,
+              password,
             );
-            if( result == FirebaseAuthResultStatus.Successful ) {
+            if (result == FirebaseAuthResultStatus.Successful) {
               // ログイン成功
               // タイムライン画面に遷移＋ログイン画面を破棄
               await Navigator.of(context).pushReplacement(
@@ -133,17 +135,16 @@ class LoginForm extends ConsumerWidget {
               final errorMessage = exceptionMessage(result);
               // ログイン失敗
               Flushbar(
-                  title : "失敗しました" ,
-                  message : "ログインに失敗しました：$errorMessage" ,
+                  title: "失敗しました",
+                  message: "ログインに失敗しました：$errorMessage",
                   backgroundColor: Colors.redAccent,
                   margin: const EdgeInsets.all(8),
                   borderRadius: BorderRadius.circular(8),
-                  duration:  const Duration(seconds: 4),
+                  duration: const Duration(seconds: 4),
                   icon: const Icon(
                     Icons.info_outline,
                     color: Colors.black,
-                  )
-              ).show(context);
+                  )).show(context);
             }
           },
         ),
@@ -153,11 +154,12 @@ class LoginForm extends ConsumerWidget {
 }
 
 // ログイン機能
-Future<FirebaseAuthResultStatus> signInEmail( String email, String password) async {
+Future<FirebaseAuthResultStatus> signInEmail(
+    String email, String password) async {
   FirebaseAuthResultStatus result;
   try {
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email, password: password);
+    UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
     print('login succeed');
     if (userCredential.user! != null) {
       result = FirebaseAuthResultStatus.Successful;

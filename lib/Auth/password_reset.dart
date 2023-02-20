@@ -42,7 +42,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
                 child: TextFormField(
                   decoration: const InputDecoration(
                     labelText: "メールアドレス",
-                    labelStyle: TextStyle( color: textColor ),
+                    labelStyle: TextStyle(color: textColor),
                   ),
                   onChanged: (String value) {
                     setState(() {
@@ -59,37 +59,38 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
                 child: TextButton(
                   onPressed: () async {
                     try {
-                      final result = await FirebaseAuth.instance.sendPasswordResetEmail(email: resetEmail);
+                      final result = await FirebaseAuth.instance
+                          .sendPasswordResetEmail(email: resetEmail);
                       setState(() {
                         Flushbar(
-                            title : "リセット用メールを送信しました" ,
+                            title: "リセット用メールを送信しました",
                             titleColor: Colors.black,
-                            message : "パスワードリセット用メールを送信しました。メールを確認してください。" ,
+                            message: "パスワードリセット用メールを送信しました。メールを確認してください。",
                             messageColor: Colors.black,
                             backgroundColor: Colors.greenAccent,
                             margin: EdgeInsets.all(8),
                             borderRadius: BorderRadius.circular(8),
-                            duration:  Duration(seconds: 4),
+                            duration: Duration(seconds: 4),
                             icon: Icon(
                               Icons.info_outline,
                               color: Colors.black,
-                            )
-                        )..show(context);
+                            ))
+                          ..show(context);
                       });
                     } catch (e) {
                       setState(() {
                         Flushbar(
-                            title : "失敗しました" ,
-                            message : "リセットに失敗したゾ：${e.toString()}" ,
+                            title: "失敗しました",
+                            message: "リセットに失敗したゾ：${e.toString()}",
                             backgroundColor: Colors.redAccent,
                             margin: EdgeInsets.all(8),
                             borderRadius: BorderRadius.circular(8),
-                            duration:  Duration(seconds: 4),
+                            duration: Duration(seconds: 4),
                             icon: Icon(
                               Icons.info_outline,
                               color: Colors.black,
-                            )
-                        )..show(context);
+                            ))
+                          ..show(context);
                       });
                     }
                   },

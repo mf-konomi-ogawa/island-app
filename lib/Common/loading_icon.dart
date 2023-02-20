@@ -6,6 +6,5 @@ Widget createProgressIndicator() {
       alignment: Alignment.center,
       child: const CircularProgressIndicator(
         color: Colors.green,
-      )
-  );
+      ));
 }

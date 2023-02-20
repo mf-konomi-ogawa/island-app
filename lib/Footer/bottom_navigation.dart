@@ -15,62 +15,51 @@ class BottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
-        backgroundColor: footerColor,
-        items: const <BottomNavigationBarItem> [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-          ),
-        ]
-      ),
+          backgroundColor: footerColor,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+            ),
+          ]),
       tabBuilder: (BuildContext context, int index) {
         switch (index) {
           case 0:
             return CupertinoTabView(
               builder: (context) {
-                return const CupertinoPageScaffold(
-                  child: TimelineScreen()
-                );
+                return const CupertinoPageScaffold(child: TimelineScreen());
               },
             );
           case 1:
             return CupertinoTabView(
               builder: (context) {
-                return const CupertinoPageScaffold(
-                  child: SearchScreen()
-                );
+                return const CupertinoPageScaffold(child: SearchScreen());
               },
             );
           case 2:
             return CupertinoTabView(
               builder: (context) {
-                return const CupertinoPageScaffold(
-                  child: NotificationScreen()
-                );
+                return const CupertinoPageScaffold(child: NotificationScreen());
               },
             );
           case 3:
             return CupertinoTabView(
               builder: (context) {
-                return const CupertinoPageScaffold(
-                  child: ProfileScreen()
-                );
+                return const CupertinoPageScaffold(child: ProfileScreen());
               },
             );
           default:
             return CupertinoTabView(
               builder: (context) {
-                return const CupertinoPageScaffold(
-                  child: ProfileScreen()
-                );
+                return const CupertinoPageScaffold(child: ProfileScreen());
               },
             );
         }

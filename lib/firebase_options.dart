@@ -73,7 +73,8 @@ class DefaultFirebaseOptions {
     projectId: 'island-develop',
     databaseURL: 'https://island-develop-default-rtdb.firebaseio.com',
     storageBucket: 'island-develop.appspot.com',
-    iosClientId: '229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com',
+    iosClientId:
+        '229244289320-mu7c1fh7v9p2tj19o80fuh6f465cmujo.apps.googleusercontent.com',
     iosBundleId: 'com.example.apikicker',
   );
 }

@@ -1,5 +1,6 @@
 /*        island       */
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:apikicker/Auth/login.dart';
@@ -25,7 +26,10 @@ final passwordProvider = StateProvider.autoDispose((ref) {
   return '';
 });
 
-final firebaseFirestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+final activityReplyListLengthProvider = StateProvider((ref) => null);
+
+final firebaseFirestoreProvider =
+    Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
 /* プログラム開始点 */
 void main() async {
@@ -34,11 +38,24 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   timeAgo.setLocaleMessages("ja", timeAgo.JaMessages()); // 投稿時間などの設定用ライブラリを設定
+
+  // // FCM の通知権限リクエスト
+  // final messaging = FirebaseMessaging.instance;
+  // await messaging.requestPermission(
+  //   alert: true,
+  //   announcement: false,
+  //   badge: true,
+  //   carPlay: false,
+  //   criticalAlert: false,
+  //   provisional: false,
+  //   sound: true,
+  // );
+  // // トークンの取得
+  // final token = await messaging.getToken();
+  // print('🐯 FCM TOKEN: $token');
   runApp(
     // Riverpodでデータを受け渡しできる状態にする
-    const ProviderScope(
-      child: MyApp()
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
@@ -48,28 +65,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'island develop',
-    initialRoute: '/', // 初期画面を'/'とする
-    routes: {
-      '/TimelineScreen': (context) => TimelineScreen(),
-    },
-    theme: ThemeData.light(),
-    darkTheme: ThemeData.dark(),
-    themeMode: ThemeMode.system,
-    home: StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ) {
-          // TODO : スプラッシュ画面にする
-          return const SizedBox();
-        }
-        if (snapshot.hasData) {
-          // User が null でなない、つまりサインイン済みのホーム画面へ
-          return const Home();
-        }
-        // User が null である、つまり未サインインのサインイン画面へ
-        return const WelcomePage();
-      },
-    ),
-  );
+        title: 'island develop',
+        initialRoute: '/', // 初期画面を'/'とする
+        routes: {
+          '/TimelineScreen': (context) => TimelineScreen(),
+        },
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // TODO : スプラッシュ画面にする
+              return const SizedBox();
+            }
+            if (snapshot.hasData) {
+              // User が null ではない、つまりサインイン済みのホーム画面へ
+              return const Home();
+            }
+            // User が null である、つまり未サインインのサインイン画面へ
+            return const WelcomePage();
+          },
+        ),
+      );
 }

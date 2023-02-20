@@ -1,7 +1,6 @@
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Home/reply_form.dart';
 import 'package:apikicker/Home/reply_list.dart';
-import 'package:apikicker/Home/tweet_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,15 +8,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'package:apikicker/Common/timeago.dart';
 import 'package:apikicker/Repository/delete_personal_activity.dart';
+import 'package:apikicker/main.dart';
+import 'dart:developer' as developer;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TweetDetails extends ConsumerStatefulWidget {
-  TweetDetails(this.id, this.title, this.image, this.text, this.timeago, {Key? key}) : super(key: key);
+  TweetDetails(this.id, this.username, this.image, this.text, this.timeago, this.photoUri,
+      {Key? key})
+      : super(key: key);
 
   String id;
-  String title;
+  String username;
   String image;
   String text;
   Timestamp timeago;
+  String photoUri;
 
   @override
   _TweetDetailsState createState() => _TweetDetailsState();
@@ -25,16 +30,49 @@ class TweetDetails extends ConsumerStatefulWidget {
 
 class _TweetDetailsState extends ConsumerState<TweetDetails> {
   String id = "";
-  String title = "";
+  String username = "";
   String image = '';
   String text = "";
   String timeago = "";
+  String photoUri = "";
+  List<dynamic> replyList = [];
 
   String? dropdownValue = "ツイートを削除";
-  List<String> dropdownItems = [ "ツイートを削除" ];
+  List<String> dropdownItems = ["削除"];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final firestore = ref.read(firebaseFirestoreProvider);
+    var replyQuerySnapShot = await firestore
+        .collection("Organization")
+        .doc("IXtqjP5JvAM2mdj0cntd")
+        .collection("space")
+        .doc("nDqwJANhr1evjCBu5Ije")
+        .collection("Activity")
+        .doc("vD3FY8cRBsj9UWjJQswy")
+        .collection("PersonalActivity")
+        .orderBy('createdAt', descending: false)
+        .where("isReplyToActivity", isEqualTo: true)
+        .where("replyActivityId", isEqualTo: widget.id)
+        .get();
+    List<dynamic> tempReplyList = [];
+    replyQuerySnapShot.docs.forEach((doc) {
+      Map<String, dynamic> replyInfo = {"id": doc.id};
+      replyInfo.addAll(doc.data());
+      tempReplyList.add(replyInfo);
+    });
+    setState(() {
+      replyList = tempReplyList;
+    });
+  }
 
   void _controlDialog(documentId, dropdownValue) {
-    if(dropdownValue == "ツイートを削除") {
+    if (dropdownValue == "ツイートを削除") {
       _showAlertDialog(documentId);
     }
   }
@@ -47,12 +85,9 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
         innerContext = context;
         return AlertDialog(
           backgroundColor: bgColor,
-          title: const Text('ツイートを削除しますか？'),
+          title: const Text('削除しますか？'),
           titleTextStyle: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0
-          ),
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
           titlePadding: const EdgeInsets.all(10),
           actions: [
             Center(
@@ -91,143 +126,140 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
   //タイムラインのコンテンツ部分
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
-      //確認用の投稿を何パターンか作成する
-      appBar: AppBar(
         backgroundColor: bgColor,
-        elevation: 0,
-        title: const Text(
-          '戻る',
-          style: TextStyle(fontSize: 16),
+        appBar: AppBar(
+          backgroundColor: bgColor,
+          elevation: 0,
         ),
-      ),
-      body: Column(
-        children: [
-          _detail(
-              widget.id,
-              widget.title,
-              Image.asset(widget.image,
-                  scale: 30, width: 50, height: 50, fit: BoxFit.cover),
-              widget.text,
-              widget.timeago
-          ),
-          Flexible(
-            child: ReplyList(
-              widget.id,
-            ),
-          )
-        ],
-      ),
-      bottomNavigationBar: GestureDetector(
-        child: Container(
-          height: 30,
-          color: bgColor,
-          child: const Text('コメントを書く', style: TextStyle(color: textColor2))
+        body: Column(
+            children:[
+                  _detail(
+                    widget.id,
+                    widget.username,
+                    CachedNetworkImage(
+                      imageUrl: widget.photoUri, fit: BoxFit.fill
+                    ),
+                    widget.text,
+                    widget.timeago
+                  ),
+                  Flexible(
+                    child: ReplyList(
+                      widget.id,
+                    ),
+                  ),
+            ],
         ),
-        onTap: () {
-          showModalBottomSheet<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                height: 500,
-                color: bgColor2,
-                child: ReplyForm(widget.id)
-              );
-            },
-          );
-        },
-      )
-    );
+        bottomNavigationBar: GestureDetector(
+          child: Container(
+              height: 30,
+              color: bgColor,
+              child:
+                  const Text('コメントを書く', style: TextStyle(color: textColor2))),
+          onTap: () {
+            showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                    height: 500,
+                    color: bgColor2,
+                    child: ReplyForm(widget.id, widget.username));
+              },
+            );
+          },
+        ));
   }
 
   //投稿の詳細
-  Widget _detail(String? id, String title, Image image, String text , Timestamp timeago) {
+  Widget _detail(String? id, String username, CachedNetworkImage image, String text,
+      Timestamp timeago) {
     return GestureDetector(
       //コンテナの中に配置していく
       child: Container(
-        padding: const EdgeInsets.fromLTRB(2, 10, 2, 2),
+        padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
         //（アイコン）（ユーザー名・投稿）を縦に並べる
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
             /*上揃えにする*/
             children: <Widget>[
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              Row(crossAxisAlignment: CrossAxisAlignment.start,
                   /*左揃えにする*/
                   children: <Widget>[
                     // ユーザーアイコン
                     Container(
-                      margin: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+                      margin: const EdgeInsets.all(4.0),
+                      width: 36,
+                      height: 36,
                       //画像を丸型にする。サイズ感は画像読み込むところで行う
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: image),
+                          child: image ),
                     ),
 
                     //ユーザー名
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(4, 0, 0, 2),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 21.0,
-                        ),
+                    Expanded(
+                        flex: 4,
+                        child:Container(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
+                          child: Text(
+                            username,
+                            maxLines:1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
                       ),
                     ),
 
                     // 投稿時間表示(今から数えた時間が表示される)
+                    Expanded(
+                        flex: 2,
+                        child:
                     Container(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 2),
+                      padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
                       child: Text(
                         createTimeAgoString(timeago.toDate()),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12.0,
                         ),
                       ),
-                    ),
-
-                    const Spacer(),
-                    /*クリップアイコンを右端に寄せるための記述*/
+                    ),),
 
                     // メニューボタン
-                    Container(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child: DropdownButton<String>(
-                          // value: dropdownValue,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownValue = newValue;
-                            });
-                          },
-                          dropdownColor: bgColor,
-                          style: const TextStyle(
-                              color: Colors.white
-                          ),
-                          items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                                onTap: () {
-                                  _controlDialog(widget.id, dropdownValue);
-                                }
-                            );
-                          }).toList(),
-                          icon: const Icon(
-                              Icons.more_horiz,
-                              size: 18,
-                              color: Colors.grey
-                          ),
-                          underline: Container(
-                            height: 0,
-                          ),
-                        )
-                    ),
+                    Expanded(
+                        flex: 1,
+                        child:
+                          Container(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                            },
+                            dropdownColor: bgColor,
+                            style: const TextStyle(color: Colors.white),
+                            items: dropdownItems
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                  onTap: () {
+                                    _controlDialog(widget.id, dropdownValue);
+                                  });
+                            }).toList(),
+                            icon: const Icon(Icons.more_horiz,
+                                size: 18, color: Colors.grey),
+                            underline: Container(
+                              height: 0,
+                            ),
+                          )
+                          ),),
                   ]),
 
               //テキスト(投稿本文)
@@ -430,19 +462,9 @@ class _TweetDetailsState extends ConsumerState<TweetDetails> {
                     ),
                     Container(
                       padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                      child: const Text(
-                        'コメント',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                      child: const Text(
-                        '11件',
-                        style: TextStyle(
+                      child: Text(
+                        "コメント " + replyList.length.toString() + " 件",
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14.0,
                         ),

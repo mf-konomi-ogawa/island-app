@@ -3,13 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apikicker/Home/timeline_screen.dart';
+import 'dart:developer' as developer;
 
-class TweetForm extends ConsumerWidget {
-  const TweetForm({Key? key}) : super(key: key);
+class TweetForm extends ConsumerStatefulWidget {
+  TweetForm(this.ownUserName, {Key? key}) : super(key: key);
+
+  String ownUserName;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var tweetContent = <String, String?> {
+  _TweetFormState createState() => _TweetFormState();
+}
+
+class _TweetFormState extends ConsumerState<TweetForm> {
+  @override
+  Widget build(BuildContext context) {
+    var tweetContent = <String, String?>{
       "uid": ref.watch(userProvider)?.uid,
       "value": "",
     }; // ツイート投稿用
@@ -37,14 +46,14 @@ class TweetForm extends ConsumerWidget {
   }
 
   //カードアイテム
-  Widget _cardItem( BuildContext context, Map tweetContent ) {
+  Widget _cardItem(BuildContext context, Map tweetContent) {
     return GestureDetector(
       child: Card(
         margin: const EdgeInsets.all(10),
         color: bgColor2,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20) /*角の丸み*/
-        ),
+            ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 10, 15, 2),
 
@@ -73,21 +82,17 @@ class TweetForm extends ConsumerWidget {
 
                   //投稿ボタン
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/');
-//                      Navigator.of(context).pop();
-                    },
                     child: Container(
                       height: 38,
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        gradient: gColor,
-
+                        //gradient: gColor,
                       ),
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocTweetAdd');
-                          final results = await callable( tweetContent );
+                          HttpsCallable callable = FirebaseFunctions.instance
+                              .httpsCallable('pocTweetAdd');
+                          final results = await callable(tweetContent);
                           Navigator.of(context).pop(results);
                         },
                         label: const Text(
@@ -95,10 +100,12 @@ class TweetForm extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.bold, /*太字*/
+                            // backgroundColor: Colors.transparent,
                           ),
                         ),
                         icon: const Icon(Icons.create, size: 20),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: buttonColor),
                       ),
                     ),
                     // ),
@@ -114,9 +121,9 @@ class TweetForm extends ConsumerWidget {
                   ),
                   Container(
                     margin: const EdgeInsets.fromLTRB(5, 0, 0, 10),
-                    child: const Text(
-                      'testname',
-                      style: TextStyle(
+                    child: Text(
+                      widget.ownUserName,
+                      style: const TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
                       ),

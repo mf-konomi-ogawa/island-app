@@ -12,15 +12,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'package:apikicker/Common/timeago.dart';
 import 'package:apikicker/Repository/delete_personal_activity.dart';
+import 'package:apikicker/Common/flushbar.dart';
+import 'package:apikicker/Home/timeline_profile_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TweetItem extends ConsumerStatefulWidget {
-  TweetItem(this.id, this.personId, this.image, this.text, this.timeago, {Key? key}) : super(key: key);
+  TweetItem(this.id, this.personId, this.image, this.text, this.timeago,
+      this.username,this.photoUri,
+      {Key? key})
+      : super(key: key);
 
-    String id;
-    String personId;
-    String image;
-    String text;
-    Timestamp timeago;
+  String id;
+  String personId;
+  String image;
+  String text;
+  Timestamp timeago;
+  String username;
+  String photoUri;
 
   @override
   _TweetItemState createState() => _TweetItemState();
@@ -28,54 +36,40 @@ class TweetItem extends ConsumerStatefulWidget {
 
 class _TweetItemState extends ConsumerState<TweetItem> {
   String? dropdownValue = "ツイートを削除";
-  List<String> dropdownItems = [ "ツイートを削除" ];
+  List<String> dropdownItems = ["削除"];
   List<dynamic> receivedEmotions = [];
   int emotionCount = 0;
   bool currentUserLikes = false;
-  String username = "";
   String timeago = "";
+  String userPhotoUri = "";
 
   @override
   void initState() {
     super.initState();
-    _getUserInfo();
     _load();
   }
 
-  Future<void> _getUserInfo() async {
-    final firestore = ref.read(firebaseFirestoreProvider);
-    var documentSnapShot = await firestore.collection("Organization")
-      .doc("IXtqjP5JvAM2mdj0cntd").collection("space")
-      .doc("nDqwJANhr1evjCBu5Ije").collection("Person")
-      .doc(widget.personId).get();
-    if(documentSnapShot.exists) {
-      final data = documentSnapShot.data();
-      setState(() {
-        username = data!["name"];
-      });
-    }
-  }
-
   Future<void> _load() async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionGet');
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('pocEmotionGet');
     final results = await callable({"id": widget.id});
     setState(() {
       receivedEmotions = results.data;
       emotionCount = receivedEmotions.length;
     });
     for (var emotion in receivedEmotions) {
-      if(emotion['personId'] == ref.watch(userProvider)?.uid) {
+      if (emotion['personId'] == ref.watch(userProvider)?.uid) {
         currentUserLikes = true;
       }
     }
   }
 
   void _controlDialog(documentId, dropdownValue) {
-    if(dropdownValue == "ツイートを削除") {
+    if (dropdownValue == "ツイートを削除") {
       _showAlertDialog(documentId);
     }
   }
-  
+
   void _showAlertDialog(documentId) async {
     BuildContext innerContext;
     showDialog(
@@ -84,12 +78,9 @@ class _TweetItemState extends ConsumerState<TweetItem> {
         innerContext = context;
         return AlertDialog(
           backgroundColor: bgColor,
-          title: const Text('ツイートを削除しますか？'),
+          title: const Text('削除しますか？'),
           titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0
-          ),
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
           titlePadding: const EdgeInsets.all(10),
           actions: [
             Center(
@@ -103,6 +94,8 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                     onPressed: () {
                       deletePersonalActivity(documentId);
                       Navigator.pop(innerContext);
+                      showTopFlushbarFromActivity(
+                          "アクティビティ削除", "アクティビティを削除しました。", context);
                     },
                   ),
                   ElevatedButton(
@@ -129,119 +122,146 @@ class _TweetItemState extends ConsumerState<TweetItem> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: ((context) => TweetDetails(
-            widget.id,
-            username,
-            'images/kkrn_icon_user_1.png',
-            widget.text,
-            widget.timeago
-            ))
-          )
-        );
+            context,
+            MaterialPageRoute(
+                builder: ((context) => TweetDetails(widget.id, widget.username,
+                    widget.image, widget.text, widget.timeago,widget.photoUri ))));
       },
       child: Container(
-        padding: const EdgeInsets.fromLTRB(4, 10, 10, 2),
+        padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+
+        // アクティビティごとのボーダー
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: lineColor))),
 
-        //（アイコン）（ユーザー名・投稿）を横に並べる
+        /**
+        *（アイコン）（ユーザー名・投稿）を横に並べる
+        * **/
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           /*上揃えにする*/
           children: <Widget>[
-            //投稿左側の設定
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              /*上揃えにする*/
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.all(4.0),
-
-                  //画像を丸型にする
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Image.asset(widget.image,
-                        scale: 15, width: 40, height: 40, fit: BoxFit.cover),
+            // 投稿左側の設定
+            GestureDetector(
+              // 画像タップでユーザプロフィールを表示する
+              onTap: () {
+                showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                        height: 540,
+                        color: bgColor2,
+                        child: TimelineProfileScreen(
+                          widget.personId, widget.username,widget.photoUri
+                    )
+                    );
+                  },
+                );
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                /*上揃えにする*/
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.all(4.0),
+                    width: 36,
+                    height: 36,
+                    //画像を丸型にする
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      // child: Image.asset(widget.image,
+                      //     scale: 15, width: 40, height: 40, fit: BoxFit.cover),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.photoUri,
+                          fit: BoxFit.fill
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+
             //投稿右側の設定
-            Flexible(
+            Expanded(
               child: Column(
                 children: <Widget>[
                   Column(crossAxisAlignment: CrossAxisAlignment.start,
                       /*左揃えにする*/
                       children: <Widget>[
                         //一番上の行
-                        Row(crossAxisAlignment: CrossAxisAlignment.center,
+                        Row(crossAxisAlignment: CrossAxisAlignment.start,
                             /*左揃えにする*/
                             children: <Widget>[
                               //ユーザー名
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
-                                child: Text(
-                                  username,
-                                  // style: GoogleFonts.alice(
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
+                              Expanded(
+                                flex: 4,
+                                child:Container(
+                                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
+                                  child: Text(
+                                    widget.username,
+                                    maxLines:1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                    ),
                                   ),
                                 ),
                               ),
 
                               //投稿時間表示(今から数えた時間が表示される)
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(8, 0, 0, 2),
-                                child: Text(
-                                  createTimeAgoString(widget.timeago.toDate()),
-                                  style: TextStyle(
+                              Expanded(
+                                flex: 2,
+                                child:Container(
+                                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
+                                  child: Text(
+                                    createTimeAgoString(widget.timeago.toDate()),
+                                    style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
+                                    ),
                                   ),
                                 ),
                               ),
 
-                              const Spacer(),
-                              
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: DropdownButton<String>(
-                                  // value: dropdownValue,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      dropdownValue = newValue;
-                                    });
-                                  },
-                                  dropdownColor: bgColor,
-                                  style: const TextStyle(
-                                    color: Colors.white
-                                  ),
-                                  items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                      onTap: () {
-                                        _controlDialog(widget.id, dropdownValue); 
-                                      }
-                                    );
-                                  }).toList(),
-                                  icon: const Icon(
-                                    Icons.more_horiz,
-                                    size: 18,
-                                    color: Colors.grey
-                                  ),
-                                  underline: Container(
-                                    height: 0,
-                                  ),
-                                )
+                              // メニュー
+                              Expanded(
+                                  flex: 1,
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    // value: dropdownValue,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue;
+                                      });
+                                    },
+                                    dropdownColor: bgColor,
+                                    style: const TextStyle(color: Colors.white),
+                                    items: dropdownItems
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                          onTap: () {
+                                            _controlDialog(
+                                                widget.id, dropdownValue);
+                                          });
+                                    }).toList(),
+                                    icon: const Icon(Icons.more_horiz,
+                                        size: 14, color: Colors.grey),
+                                    underline: Container(
+                                      height: 0,
+                                    ),
+                                  )
                               ),
-                            ]),
+                            ]
+                        ),
 
                         //テキスト(投稿本文)
                         Container(
-                          padding: const EdgeInsets.fromLTRB(4, 2, 10, 10),
+                          padding: const EdgeInsets.fromLTRB(4, 2, 10, 8),
                           child: Text(
                             widget.text,
                             style: const TextStyle(
@@ -259,8 +279,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                             children: <Widget>[
                               //ハート
                               LikeButton(
-                                padding:
-                                const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 likeCount: emotionCount,
                                 //アニメーションで変化するときの色
@@ -271,7 +290,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                   //表示するアイコン
                                   return Icon(
                                     Icons.favorite,
-                                    size: 25,
+                                    size: 18,
                                     color: isLiked ? accentColor : Colors.grey,
                                   );
                                 },
@@ -284,18 +303,22 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                     "tweetId": widget.id,
                                     "uid": ref.read(userProvider)?.uid
                                   };
-                                  if(currentUserLikes) {
-                                      setState(() {
-                                        emotionCount += 1;
-                                      });
-                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionAdd');
-                                      await callable(data);
+                                  if (currentUserLikes) {
+                                    setState(() {
+                                      emotionCount += 1;
+                                    });
+                                    HttpsCallable callable = FirebaseFunctions
+                                        .instance
+                                        .httpsCallable('pocEmotionAdd');
+                                    await callable(data);
                                   } else {
-                                      setState(() {
-                                        emotionCount -= 1;
-                                      });
-                                      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocEmotionDelete');
-                                      await callable(data);
+                                    setState(() {
+                                      emotionCount -= 1;
+                                    });
+                                    HttpsCallable callable = FirebaseFunctions
+                                        .instance
+                                        .httpsCallable('pocEmotionDelete');
+                                    await callable(data);
                                   }
                                   return;
                                 },
@@ -304,7 +327,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                       ]),
                 ],
               ),
-            ),
+           ),
           ],
         ),
       ),

@@ -9,7 +9,7 @@ class DeleteConfirmDialog extends StatelessWidget {
   DeleteConfirmDialog(documentId, {Key? key}) : super(key: key);
 
   String documentId = "";
-  
+
   @override
   Widget build(BuildContext context) {
     BuildContext innerContext;
@@ -18,10 +18,7 @@ class DeleteConfirmDialog extends StatelessWidget {
       backgroundColor: bgColor,
       title: const Text('ツイートを削除しますか？'),
       titleTextStyle: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 20.0
-      ),
+          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
       titlePadding: const EdgeInsets.all(10),
       actions: [
         Center(
@@ -54,7 +51,8 @@ class DeleteConfirmDialog extends StatelessWidget {
   }
 
   void _deletePersonalActivity(personalActivityId) async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('pocDeletePersonalActivity');
     final results = await callable(personalActivityId);
   }
 }
