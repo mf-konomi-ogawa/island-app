@@ -11,8 +11,8 @@ bool showTopFlushbarFromActivity(
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.blueAccent,
       margin: const EdgeInsets.all(8),
-      borderRadius: BorderRadius.circular(8),
-      duration: const Duration(seconds: 2,microseconds: 100),
+      // borderRadius: BorderRadius.circular(8),
+      duration: const Duration(seconds: 2, microseconds: 100),
       isDismissible: true,
       animationDuration: const Duration(milliseconds: 300),
       icon: const Icon(
@@ -23,7 +23,7 @@ bool showTopFlushbarFromActivity(
 }
 
 bool showTopFlushbarFromProfileError(
-    String title, String message , BuildContext context ) {
+    String title, String message, BuildContext context) {
   Flushbar(
       title: title,
       message: message,
@@ -32,14 +32,13 @@ bool showTopFlushbarFromProfileError(
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.redAccent,
       margin: const EdgeInsets.all(8),
-      borderRadius: BorderRadius.circular(8),
-      duration: const Duration(seconds: 2,microseconds: 100),
+      // borderRadius: BorderRadius.circular(8),
+      duration: const Duration(seconds: 2, microseconds: 100),
       isDismissible: true,
       animationDuration: const Duration(milliseconds: 300),
       icon: const Icon(
         Icons.info_outline,
         color: Colors.white,
-      )
-  ).show(context);
+      )).show(context);
   return true;
 }

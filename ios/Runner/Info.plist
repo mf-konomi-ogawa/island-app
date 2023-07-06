@@ -62,5 +62,9 @@
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string></string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 </dict>
 </plist>

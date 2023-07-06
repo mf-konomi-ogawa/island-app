@@ -16,7 +16,7 @@ class NotificationScreen extends StatelessWidget {
         backgroundColor: bgColor,
         elevation: 0,
         title: const Text(
-          '通知',
+          'お知らせ',
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -177,7 +177,8 @@ class NotificationScreen extends StatelessWidget {
     return GestureDetector(
       child: Column(
         children: <Widget>[
-          Row(crossAxisAlignment: CrossAxisAlignment.center,
+          Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               /*左揃えにする*/
               children: <Widget>[
                 //画像処理
@@ -190,7 +191,8 @@ class NotificationScreen extends StatelessWidget {
                 ),
 
                 //右側
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     /*左揃えにする*/
                     children: <Widget>[
                       //開催日
@@ -324,11 +326,13 @@ class NotificationScreen extends StatelessWidget {
             Flexible(
               child: Column(
                 children: <Widget>[
-                  Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       /*左揃えにする*/
                       children: <Widget>[
                         //一番上の行
-                        Row(crossAxisAlignment: CrossAxisAlignment.center,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             /*左揃えにする*/
                             children: <Widget>[
                               //ユーザー名
@@ -392,7 +396,8 @@ class NotificationScreen extends StatelessWidget {
                         //リアクションボタン
                         //like_button.dartを使用しています
                         //リアクションボタンはもう少し小さくてもいい気がします
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             /*左揃えにする*/
                             children: <Widget>[
                               //ハート
@@ -578,7 +583,8 @@ class NotificationScreen extends StatelessWidget {
                               ),
                             ]),
                         //コメント
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             /*左揃えにする*/
                             children: <Widget>[
                               Container(
@@ -649,7 +655,8 @@ class NotificationScreen extends StatelessWidget {
                   /*上揃えにする*/
                   children: <Widget>[
                     // アイコンを並べる
-                    Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         /*左揃えにする*/
                         children: <Widget>[
                           Container(

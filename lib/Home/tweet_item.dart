@@ -15,10 +15,11 @@ import 'package:apikicker/Repository/delete_personal_activity.dart';
 import 'package:apikicker/Common/flushbar.dart';
 import 'package:apikicker/Home/timeline_profile_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:apikicker/Provider/user_provider.dart';
 
 class TweetItem extends ConsumerStatefulWidget {
   TweetItem(this.id, this.personId, this.image, this.text, this.timeago,
-      this.username,this.photoUri,
+      this.username, this.photoUri, this.assetsUrls,
       {Key? key})
       : super(key: key);
 
@@ -29,19 +30,22 @@ class TweetItem extends ConsumerStatefulWidget {
   Timestamp timeago;
   String username;
   String photoUri;
+  String assetsUrls;
 
   @override
   _TweetItemState createState() => _TweetItemState();
 }
 
 class _TweetItemState extends ConsumerState<TweetItem> {
-  String? dropdownValue = "ツイートを削除";
-  List<String> dropdownItems = ["削除"];
   List<dynamic> receivedEmotions = [];
   int emotionCount = 0;
   bool currentUserLikes = false;
   String timeago = "";
   String userPhotoUri = "";
+  bool _isTappedLikeButton = false;
+
+  final List<String> menuLists = ["削除"];
+  String selectedValue = "削除";
 
   @override
   void initState() {
@@ -95,7 +99,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                       deletePersonalActivity(documentId);
                       Navigator.pop(innerContext);
                       showTopFlushbarFromActivity(
-                          "アクティビティ削除", "アクティビティを削除しました。", context);
+                          "削除", "アクティビティを削除しました。", context);
                     },
                   ),
                   ElevatedButton(
@@ -114,7 +118,6 @@ class _TweetItemState extends ConsumerState<TweetItem> {
         );
       },
     );
-    // setState(() => _setResultString(result));
   }
 
   @override
@@ -124,8 +127,15 @@ class _TweetItemState extends ConsumerState<TweetItem> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: ((context) => TweetDetails(widget.id, widget.username,
-                    widget.image, widget.text, widget.timeago,widget.photoUri ))));
+                builder: ((context) => TweetDetails(
+                      widget.id,
+                      widget.username,
+                      widget.image,
+                      widget.text,
+                      widget.timeago,
+                      widget.photoUri,
+                      widget.assetsUrls,
+                    ))));
       },
       child: Container(
         padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
@@ -153,9 +163,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                         height: 540,
                         color: bgColor2,
                         child: TimelineProfileScreen(
-                          widget.personId, widget.username,widget.photoUri
-                    )
-                    );
+                            widget.personId, widget.username, widget.photoUri));
                   },
                 );
               },
@@ -170,12 +178,8 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                     //画像を丸型にする
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
-                      // child: Image.asset(widget.image,
-                      //     scale: 15, width: 40, height: 40, fit: BoxFit.cover),
                       child: CachedNetworkImage(
-                        imageUrl: widget.photoUri,
-                          fit: BoxFit.fill
-                      ),
+                          imageUrl: widget.photoUri, fit: BoxFit.fill),
                     ),
                   ),
                 ],
@@ -186,21 +190,24 @@ class _TweetItemState extends ConsumerState<TweetItem> {
             Expanded(
               child: Column(
                 children: <Widget>[
-                  Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       /*左揃えにする*/
                       children: <Widget>[
                         //一番上の行
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             /*左揃えにする*/
                             children: <Widget>[
                               //ユーザー名
                               Expanded(
                                 flex: 4,
-                                child:Container(
-                                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(4, 4, 0, 2),
                                   child: Text(
                                     widget.username,
-                                    maxLines:1,
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -213,13 +220,15 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                               //投稿時間表示(今から数えた時間が表示される)
                               Expanded(
                                 flex: 2,
-                                child:Container(
-                                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 2),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(4, 4, 0, 2),
                                   child: Text(
-                                    createTimeAgoString(widget.timeago.toDate()),
+                                    createTimeAgoString(
+                                        widget.timeago.toDate()),
                                     style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12.0,
+                                      color: Colors.grey,
+                                      fontSize: 12.0,
                                     ),
                                   ),
                                 ),
@@ -227,41 +236,35 @@ class _TweetItemState extends ConsumerState<TweetItem> {
 
                               // メニュー
                               Expanded(
-                                  flex: 1,
-                                  child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    // value: dropdownValue,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        dropdownValue = newValue;
-                                      });
-                                    },
-                                    dropdownColor: bgColor,
-                                    style: const TextStyle(color: Colors.white),
-                                    items: dropdownItems
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                          onTap: () {
-                                            _controlDialog(
-                                                widget.id, dropdownValue);
-                                          });
-                                    }).toList(),
-                                    icon: const Icon(Icons.more_horiz,
+                                flex: 1,
+                                child: PopupMenuButton<String>(
+                                    color: bgColor2,
+                                    child: const Icon(Icons.more_horiz,
                                         size: 14, color: Colors.grey),
-                                    underline: Container(
-                                      height: 0,
-                                    ),
-                                  )
+                                    itemBuilder: (BuildContext context) {
+                                      return menuLists.map((String list) {
+                                        return PopupMenuItem(
+                                            value: list,
+                                            textStyle: const TextStyle(
+                                                color: Colors.white),
+                                            child: Text(list),
+                                            onTap: () {
+                                              _controlDialog(
+                                                  widget.id, "ツイートを削除");
+                                            });
+                                      }).toList();
+                                    },
+                                    onSelected: (String list) {
+                                      setState(() {
+                                        selectedValue = list;
+                                      });
+                                    }),
                               ),
-                            ]
-                        ),
+                            ]),
 
                         //テキスト(投稿本文)
                         Container(
-                          padding: const EdgeInsets.fromLTRB(4, 2, 10, 8),
+                          padding: const EdgeInsets.fromLTRB(4, 10, 10, 8),
                           child: Text(
                             widget.text,
                             style: const TextStyle(
@@ -271,10 +274,14 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                           ),
                         ),
 
+                        // 画像。いったん asset 1 つのみを決め打ちで表示
+                        GestureDetector(
+                          child: ifAssets(widget.assetsUrls),
+                        ),
+
                         //リアクションボタン
-                        //like_button.dartを使用しています
-                        //リアクションボタンはもう少し小さくてもいい気がします
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             /*左揃えにする*/
                             children: <Widget>[
                               //ハート
@@ -284,7 +291,7 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                 likeCount: emotionCount,
                                 //アニメーションで変化するときの色
                                 circleColor: const CircleColor(
-                                    start: Colors.tealAccent, end: accentColor),
+                                    start: Colors.pink, end: Colors.redAccent),
                                 isLiked: currentUserLikes,
                                 likeBuilder: (bool isLiked) {
                                   //表示するアイコン
@@ -295,42 +302,130 @@ class _TweetItemState extends ConsumerState<TweetItem> {
                                   );
                                 },
                                 onTap: (bool isLiked) async {
-                                  setState(() {
+                                  if (!_isTappedLikeButton) {
+                                    _isTappedLikeButton = true;
                                     currentUserLikes = !isLiked;
-                                  });
-                                  var data = {
-                                    "emotionId": "001",
-                                    "tweetId": widget.id,
-                                    "uid": ref.read(userProvider)?.uid
-                                  };
-                                  if (currentUserLikes) {
-                                    setState(() {
-                                      emotionCount += 1;
-                                    });
-                                    HttpsCallable callable = FirebaseFunctions
-                                        .instance
-                                        .httpsCallable('pocEmotionAdd');
-                                    await callable(data);
-                                  } else {
-                                    setState(() {
-                                      emotionCount -= 1;
-                                    });
-                                    HttpsCallable callable = FirebaseFunctions
-                                        .instance
-                                        .httpsCallable('pocEmotionDelete');
-                                    await callable(data);
+                                    var data = {
+                                      "emotionId": "001",
+                                      "tweetId": widget.id,
+                                      "uid": ref.read(userProvider)?.uid
+                                    };
+                                    if (currentUserLikes) {
+                                      HttpsCallable callable = FirebaseFunctions
+                                          .instance
+                                          .httpsCallable('pocEmotionAdd');
+                                      await callable(data);
+                                    } else {
+                                      HttpsCallable callable = FirebaseFunctions
+                                          .instance
+                                          .httpsCallable('pocEmotionDelete');
+                                      await callable(data);
+                                    }
+                                    currentUserLikes = !isLiked;
+                                    _isTappedLikeButton = false;
+                                    return !isLiked;
                                   }
-                                  return;
+                                  return !isLiked;
                                 },
+                                // onTap: (bool isLiked) async {
+                                //   setState(() {
+                                //     currentUserLikes = !isLiked;
+                                //   });
+                                //   var data = {
+                                //     "emotionId": "001",
+                                //     "tweetId": widget.id,
+                                //     "uid": ref.read(userProvider)?.uid
+                                //   };
+                                //   if (currentUserLikes) {
+                                //     setState(() {
+                                //       emotionCount += 1;
+                                //     });
+                                //     HttpsCallable callable = FirebaseFunctions
+                                //         .instance
+                                //         .httpsCallable('pocEmotionAdd');
+                                //     await callable(data);
+                                //   } else {
+                                //     setState(() {
+                                //       emotionCount -= 1;
+                                //     });
+                                //     HttpsCallable callable = FirebaseFunctions
+                                //         .instance
+                                //         .httpsCallable('pocEmotionDelete');
+                                //     await callable(data);
+                                //   }
+                                //   return;
+                                // },
                               ),
                             ]),
                       ]),
                 ],
               ),
-           ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  /*
+  * いったん画像のありなしで出し分ける
+  * TODO : データが増えたら煩雑なので、リストとかにした方がいいかも
+  * */
+  Widget ifAssets(String value) {
+    if (value != '') {
+      // assets がある場合は、画像を返す
+      return GestureDetector(
+        child: CachedNetworkImage(
+          imageUrl: widget.assetsUrls,
+          height: 48,
+          width: 48,
+        ),
+        onTap: () {
+          showModalBottomSheet<void>(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                  color: bgColor2,
+                  child: ActivityAssetsScreen(widget.assetsUrls));
+            },
+          );
+        },
+      );
+    } else {
+      // assets がない場合は、空。
+      return const SizedBox();
+    }
+  }
+}
+
+/*
+* アクティビティ一覧に表示する画像の出し分け処理によって、表示されるサムネイル部分
+* */
+class ActivityAssetsScreen extends ConsumerStatefulWidget {
+  const ActivityAssetsScreen(this.assetsUrls, {Key? key}) : super(key: key);
+
+  final String assetsUrls;
+
+  @override
+  _ActivityAssetsScreen createState() => _ActivityAssetsScreen();
+}
+
+class _ActivityAssetsScreen extends ConsumerState<ActivityAssetsScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: bgColor,
+        elevation: 0,
+      ),
+      body: Center(child: CachedNetworkImage(imageUrl: widget.assetsUrls)),
+      backgroundColor: bgColor,
     );
   }
 }

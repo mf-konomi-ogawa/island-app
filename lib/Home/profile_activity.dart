@@ -34,6 +34,7 @@ class _ProfileActivity extends ConsumerState<ProfileActivity> {
                   widget.tweetContentslist[index]['createdAt'],
                   widget.tweetContentslist[index]['username'],
                   widget.tweetContentslist[index]['photoUri'],
+                  widget.tweetContentslist[index]['assetsUrls'],
                 ));
           },
         ),

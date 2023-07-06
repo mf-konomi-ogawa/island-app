@@ -1,3 +1,4 @@
+import 'package:apikicker/Provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,7 @@ class TimelineProfileScreen extends ConsumerStatefulWidget {
   _TimelineProfileScreen createState() => _TimelineProfileScreen();
 }
 
-class _TimelineProfileScreen extends ConsumerState<TimelineProfileScreen> {
+class _TimelineProfileScreen extends ConsumerState<TimelineProfileScreen>{
   String userName = "";
   String profileText = "";
   String personId = "";
@@ -29,7 +30,7 @@ class _TimelineProfileScreen extends ConsumerState<TimelineProfileScreen> {
     _load();
   }
 
-  void _load() async{
+  Future<void> _load() async{
     userName = widget.userName;
     personId = widget.id;
     photoUri = widget.photoUri;
@@ -52,10 +53,6 @@ class _TimelineProfileScreen extends ConsumerState<TimelineProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String?> updateProfile = {
-      "uid": personId,
-      "name": userName,
-    };
     return SizedBox(
       height: 320,
       child: Card(

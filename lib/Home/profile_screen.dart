@@ -7,34 +7,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
 import 'package:apikicker/Home/profile_activity.dart';
 import 'package:apikicker/Home/profile_edit.dart';
+import 'package:apikicker/Home/profile_clip.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:apikicker/Provider/user_provider.dart';
 
 const _tabs = [
   '投稿',
   'クリップ',
 ];
 
-class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
 
-  @override
-  _ProfileScreen createState() => _ProfileScreen();
-}
-
-class _ProfileScreen extends ConsumerState<ProfileScreen> {
-  List<dynamic> tweetContentslist = []; // アクティビティの内容
-  String ownUserName = "";
-  String ownUserPhotoUri = "";
-  String? userId = "";
-  String profileText = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
+  void initState(WidgetRef ref) {
+    _load(ref);
   }
 
-  Future<String> _load() async {
+  Future<String> _load(WidgetRef ref) async {
     final firestore = ref.read(firebaseFirestoreProvider);
 
     // アクティビティ取得
@@ -65,7 +54,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
       tempUserList.add(userInfo);
     });
 
-    // 自身のユーザー名を取得
+    // 自身のユーザー情報を取得
     var usernameDocumentSnapShot = await firestore
         .collection("Organization")
         .doc("IXtqjP5JvAM2mdj0cntd")
@@ -75,58 +64,45 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         .doc(ref.watch(userProvider)?.uid)
         .get();
     var ownUser = usernameDocumentSnapShot.data();
-    userId = ref.read(userProvider)?.uid;
-
-    // 自身の自己紹介を取得
-    var profileTextDocumentSnapShot = await firestore
-        .collection("Organization")
-        .doc("IXtqjP5JvAM2mdj0cntd")
-        .collection("space")
-        .doc("nDqwJANhr1evjCBu5Ije")
-        .collection("Person")
-        .doc(userId)
-        .get();
-    profileText = profileTextDocumentSnapShot.data()!['profileText'];
 
     // タイムライン情報の設定
     List<dynamic> tempTweetList = [];
     querySnapShot.docs.forEach((doc) {
       // タイムライン情報に自身のユーザー情報を紐づける
-      if (doc.data()['personId'] == userId) {
+      if (doc.data()['personId'] == ref.read(userProvider)?.uid) {
         Map<String, dynamic> tweetInfo = {
           "id": doc.id,
           "username": ownUser!['name'],
-          "photoUri": ownUser!['photoUri'],
+          "photoUri": ownUser['photoUri'],
+          "profileText": ownUser['profileText'],
         };
         tweetInfo.addAll(doc.data());
         tempTweetList.add(tweetInfo);
       }
     });
 
-    // tweetContentslist にタイムラインのユーザー情報を詰める
-    setState(() {
-      tweetContentslist = tempTweetList;
-      ownUserName = ownUser!['name'];
-      ownUserPhotoUri = ownUser!['photoUri'];
-      userId = ref.read(userProvider)?.uid;
-    });
+    ref.watch(ownActivityContentsListProvider.notifier).state = tempTweetList;
+    ref.watch(ownUserNameProvider.notifier).state = ownUser!['name'];
+    ref.watch(ownUserPhotoUriProvider.notifier).state = ownUser['photoUri'];
+    ref.watch(ownUserProfileTextProvider.notifier).state =
+        ownUser['profileText'];
 
     return "Data Loading";
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         backgroundColor: bgColor2,
         appBar: AppBar(
           backgroundColor: bgColor2,
           elevation: 0,
           title: const Text(
-            'プロフィール',
+            'アカウント',
             style: TextStyle(fontSize: 16),
           ),
           centerTitle: true,
-          leading: const Icon(Icons.settings),
+          // leading: const Icon(Icons.settings),
           /*設定アイコン*/
           actions: <Widget>[
             IconButton(
@@ -141,7 +117,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         body: DefaultTabController(
           length: _tabs.length, // This is the number of tabs.
           child: FutureBuilder<String>(
-              future: _load(),
+              future: _load(ref),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   // ロード終了
@@ -152,12 +128,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                         //スクロールしたら折りたたまれる要素(アイコンや名前、説明文など)
                         SliverList(
                           delegate: SliverChildListDelegate([
-                            // 自身のアクティビティリスト
-                            _profileItem(ownUserName,ownUserPhotoUri),
+                            // 自身の名前・プロフィール画像
+                            _profileItem(ref),
                             // 編集ボタン
-                            _profileButtonItem(
-                                context, userId!, ownUserName, profileText, ownUserPhotoUri ),
-                            _profileSentenceItem(profileText!),
+                            _profileButtonItem(context, ref),
+                            _profileSentenceItem(ref),
                           ]),
                         ),
                         //スクロールしたら上にとどまる要素(タブ)
@@ -185,11 +160,12 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                       children: <Widget>[
                         // 自身の投稿一覧
                         Center(
-                          child: ProfileActivity(tweetContentslist),
+                          child: ProfileActivity(
+                              ref.watch(ownActivityContentsListProvider)),
                         ),
                         // クリップ一覧
                         Center(
-                          child: ProfileActivity(tweetContentslist),
+                          child: ProfileClip(),
                         ),
                         // Center(child: ClipPage()), /*クリップ一覧*/
                       ],
@@ -201,12 +177,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                 } else {
                   // ロード中
                   return const Center(
-                    child:CircularProgressIndicator(),
+                    child: CircularProgressIndicator(),
                   );
                 }
               }),
-        )
-    );
+        ));
   }
 }
 
@@ -257,7 +232,7 @@ void _showAlertDialog(BuildContext context) async {
 }
 
 //プロフィールの設定(調整部分)
-Widget _profileItem(String ownUserName,String ownUserPhotoUri ) {
+Widget _profileItem(WidgetRef ref) {
   return GestureDetector(
     //コンテナの中に配置していく
     child: Container(
@@ -266,7 +241,8 @@ Widget _profileItem(String ownUserName,String ownUserPhotoUri ) {
       decoration: const BoxDecoration(),
 
       //（アイコン）（ユーザー名・投稿）を横に並べる
-      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           /*上揃えにする*/
           children: <Widget>[
             //投稿左側の設定
@@ -274,26 +250,23 @@ Widget _profileItem(String ownUserName,String ownUserPhotoUri ) {
               mainAxisAlignment: MainAxisAlignment.start,
               /*上揃えにする*/
               children: <Widget>[
-                //アイコン
-                // _iconItem(Image.asset(
-                //   'images/kkrn_icon_user_1.png',
-                //   width: 120,
-                //   height: 120,
-                //   fit: BoxFit.fill,
-                // )),
+                // アイコン
                 _iconItem(
-                  CachedNetworkImage( imageUrl: ownUserPhotoUri , fit: BoxFit.fill),
+                  CachedNetworkImage(
+                      imageUrl: ref.watch(ownUserPhotoUriProvider),
+                      fit: BoxFit.fill),
                 ),
               ],
             ),
             //投稿右側の設定
             Flexible(
               child: Column(children: <Widget>[
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     /*左揃えにする*/
                     children: <Widget>[
-                      //ユーザー名
-                      _nameItem(ownUserName, "SOL", "プロダクト開発グループ"),
+                      // ユーザー名
+                      _nameItem(ref, "SOL", "プロダクト開発グループ"),
                     ]),
               ]),
             ),
@@ -329,7 +302,7 @@ Widget _iconItem(CachedNetworkImage image) {
 }
 
 //名前とかプロフィール説明とか
-Widget _nameItem(String name, String group1, String group2) {
+Widget _nameItem(WidgetRef ref, String group1, String group2) {
   return GestureDetector(
     child: Column(
       children: <Widget>[
@@ -341,7 +314,8 @@ Widget _nameItem(String name, String group1, String group2) {
             Container(
               padding: const EdgeInsets.fromLTRB(0, 10, 30, 10),
               child: Text(
-                name,
+                ref.watch(ownUserNameProvider),
+                //name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
@@ -394,7 +368,7 @@ Widget _nameItem(String name, String group1, String group2) {
 }
 
 //プロフィール文（自己紹介）
-Widget _profileSentenceItem(String profileSentence) {
+Widget _profileSentenceItem(WidgetRef ref) {
   return GestureDetector(
     child: Column(
       children: <Widget>[
@@ -406,7 +380,7 @@ Widget _profileSentenceItem(String profileSentence) {
             Container(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
               child: Text(
-                profileSentence,
+                ref.watch(ownUserProfileTextProvider),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15.0,
@@ -421,8 +395,7 @@ Widget _profileSentenceItem(String profileSentence) {
 }
 
 //プロフィール編集ボタン
-Widget _profileButtonItem(BuildContext context, String userId,
-    String ownUserName, String profileText , String ownUserPhotoUri ) {
+Widget _profileButtonItem(BuildContext context, WidgetRef ref) {
   return GestureDetector(
     child: Column(
       children: <Widget>[
@@ -434,39 +407,37 @@ Widget _profileButtonItem(BuildContext context, String userId,
             Container(
               height: 40,
               width: 250,
-              //decoration: gradationButton,
-              // BoxDecoration(
-              //   // shape: BoxShape.circle,
-              //   borderRadius: BorderRadius.circular(20),
-              //   gradient: gColor,
-              // ),
               padding: const EdgeInsets.fromLTRB(2, 2, 8, 8),
               child: ElevatedButton(
                 child: const Text(
                   'プロフィールを編集',
                   style: TextStyle(
                     fontSize: 14.0,
-                    fontWeight: FontWeight.bold, /*太字*/
+                    fontWeight: FontWeight.bold,
                     backgroundColor: Colors.transparent,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
-                // style: ElevatedButton.styleFrom(
-                //   primary: accentColor,
-                //   onPrimary: Colors.black,
-                //   shape: const StadiumBorder(),
-                //   padding: const EdgeInsets.fromLTRB(50, 10, 50, 10),
-                // ),
                 onPressed: () {
                   showModalBottomSheet<void>(
                     isScrollControlled: true,
                     context: context,
-                    builder: (BuildContext context) {
+                    builder: (context) {
+                      TextEditingController textNameEditingController =
+                          TextEditingController(
+                              text: ref.watch(ownUserNameProvider));
+                      TextEditingController textProfileEditingController =
+                          TextEditingController(
+                              text: ref.watch(ownUserProfileTextProvider));
                       return Container(
-                          height: 540,
+                          height: 580,
                           color: bgColor2,
-                          child: ProfileEditForm(
-                              userId, ownUserName, profileText,ownUserPhotoUri));
+                          child: SingleChildScrollView(
+                              child: ProfileEditForm(
+                                  textNameEditingController:
+                                      textNameEditingController,
+                                  textProfileEditingController:
+                                      textProfileEditingController)));
                     },
                   );
                 },

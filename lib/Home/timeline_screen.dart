@@ -5,28 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:apikicker/Common/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:like_button/like_button.dart';
 import 'dart:developer' as developer;
 import 'dart:async';
+import 'package:apikicker/Provider/user_provider.dart';
 
-class TimelineScreen extends ConsumerStatefulWidget {
-  const TimelineScreen({Key? key}) : super(key: key);
+class TimelineScreen extends ConsumerWidget {
+  const TimelineScreen({super.key});
 
-  @override
-  _TimelineScreenState createState() => _TimelineScreenState();
-}
-
-class _TimelineScreenState extends ConsumerState<TimelineScreen> {
-  List<dynamic> tweetContentslist = []; // アクティビティの内容
-  String ownUserName = ''; // 自身のユーザー名
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<String> _load() async {
+  Future<String> _load(WidgetRef ref) async {
     final firestore = ref.read(firebaseFirestoreProvider);
 
     // アクティビティ取得
@@ -40,6 +26,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         .collection("PersonalActivity")
         .orderBy('createdAt', descending: true)
         .where("isReplyToActivity", isEqualTo: false)
+        .limit(50)
         .get();
 
     // ユーザー情報取得
@@ -57,7 +44,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
       tempUserList.add(userInfo);
     });
 
-    // 自身のユーザー名を取得
+    // 自身のユーザー情報を取得
     var usernameDocumentSnapShot = await firestore
         .collection("Organization")
         .doc("IXtqjP5JvAM2mdj0cntd")
@@ -67,7 +54,6 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         .doc(ref.watch(userProvider)?.uid)
         .get();
     var ownUser = usernameDocumentSnapShot.data();
-    ownUserName = ownUser!['name'];
 
     // タイムライン情報の設定
     List<dynamic> tempTweetList = [];
@@ -86,21 +72,24 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         "id": doc.id,
         "username": tempUserName,
         "photoUri": tempPhotoUri,
+        "profileText": ownUser!['profileText'],
+        "assetsUrls": doc.data()['assetsUrls']
       };
       tweetInfo.addAll(doc.data());
       tempTweetList.add(tweetInfo);
     });
 
-    // tweetContentslist にタイムライン情報とユーザー情報を詰める
-    setState(() {
-      tweetContentslist = tempTweetList;
-    });
+    ref.watch(activityContentsListProvider.notifier).state = tempTweetList;
+    ref.watch(ownUserNameProvider.notifier).state = ownUser!['name'];
+    ref.watch(ownUserPhotoUriProvider.notifier).state = ownUser['photoUri'];
+    ref.watch(ownUserProfileTextProvider.notifier).state =
+        ownUser['profileText'];
 
     return "Data Loaded";
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -112,63 +101,70 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           width: 32,
         ),
       ),
-      body: RefreshIndicator(
-          onRefresh: () async {
-            await _load();
-          },
-          child: FutureBuilder<String>(
-            future: _load(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.hasData) {
-                // ロード終了
-                return ListView.builder(
-                  itemCount: tweetContentslist.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                        color: bgColor,
-                        child: TweetItem(
-                          tweetContentslist[index]['id'],
-                          tweetContentslist[index]['personId'],
-                          'images/kkrn_icon_user_1.png',
-                          tweetContentslist[index]['contents'],
-                          tweetContentslist[index]['createdAt'],
-                          tweetContentslist[index]['username'],
-                          tweetContentslist[index]['photoUri'],
-                        ));
-                  },
-                );
-              } else if (snapshot.hasError) {
-                // ロード失敗
-                return const Text("読み込みに失敗");
-              } else {
-                // ロード中
-                return const Center(
-                    child:CircularProgressIndicator(),
-                );
-              }
-            },
-          )
-      ),
+
+      // アクティビティのリスト
+      body: _mainScreen(context, ref),
+
       // 投稿ボタン
       floatingActionButton: FloatingActionButton(
         backgroundColor: buttonColor,
         child: Container(
-          // decoration: gradationBox,
           child: const Icon(Icons.edit),
           padding: const EdgeInsets.all(17.0),
         ),
         onPressed: () async {
           final results = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return TweetForm(ownUserName);
+              return TweetForm(ref.watch(ownUserNameProvider),
+                  ref.watch(ownUserPhotoUriProvider));
             }),
           );
           if (results != null) {
-            showTopFlushbarFromActivity(
-                "投稿", "アクティビティを投稿しました。", context);
+            showTopFlushbarFromActivity("投稿", "アクティビティを投稿しました。", context);
           }
         },
       ),
     );
+  }
+
+  Widget _mainScreen(BuildContext context, WidgetRef ref) {
+    return RefreshIndicator(
+        onRefresh: () async {
+          await _load(ref);
+        },
+        child: FutureBuilder<String>(
+          future: _load(ref),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              // ロード終了
+              return ListView.builder(
+                itemCount: ref.watch(activityContentsListProvider).length,
+                itemBuilder: (BuildContext context, int index) {
+                  final activityList = ref.watch(activityContentsListProvider);
+                  return Card(
+                      color: bgColor,
+                      child: TweetItem(
+                        activityList[index]['id'],
+                        activityList[index]['personId'],
+                        'images/kkrn_icon_user_1.png',
+                        activityList[index]['contents'],
+                        activityList[index]['createdAt'],
+                        activityList[index]['username'],
+                        activityList[index]['photoUri'],
+                        activityList[index]['assetsUrls'],
+                      ));
+                },
+              );
+            } else if (snapshot.hasError) {
+              // ロード失敗
+              return const Text("読み込みに失敗");
+            } else {
+              // ロード中
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ));
   }
 }

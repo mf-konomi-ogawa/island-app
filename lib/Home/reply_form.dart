@@ -5,24 +5,19 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:apikicker/Common/color_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
+import 'package:apikicker/Provider/user_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class ReplyForm extends ConsumerStatefulWidget {
-  ReplyForm(this.id, this.username, {Key? key}) : super(key: key);
-
-  String id = "";
-  String username = "";
+class ReplyForm extends ConsumerWidget {
+  ReplyForm({super.key});
+  bool _isDisabledReply = false; // 投稿ボタンの連打制御用
 
   @override
-  _ReplyFormState createState() => _ReplyFormState();
-}
-
-class _ReplyFormState extends ConsumerState<ReplyForm> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var tweetContent = <String, String?>{
-      "id": widget.id,
+      "id": ref.watch(activityDocumentIdProvider),
       "uid": ref.watch(userProvider)?.uid,
-      "value": "",
+      "value": ref.watch(replyFormTextProvider),
     }; // ツイート投稿用
     return Scaffold(
       backgroundColor: bgColor,
@@ -37,7 +32,7 @@ class _ReplyFormState extends ConsumerState<ReplyForm> {
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
                   reverse: true,
-                  child: _cardItem(context, tweetContent),
+                  child: _cardItem(context, tweetContent, ref),
                 ),
               ),
             ),
@@ -48,7 +43,7 @@ class _ReplyFormState extends ConsumerState<ReplyForm> {
   }
 
   //カードアイテム
-  Widget _cardItem(BuildContext context, Map tweetContent) {
+  Widget _cardItem(BuildContext context, Map tweetContent, WidgetRef ref) {
     return GestureDetector(
       child: Card(
         margin: const EdgeInsets.all(10),
@@ -94,14 +89,27 @@ class _ReplyFormState extends ConsumerState<ReplyForm> {
                         // gradient: gColor,
                       ),
                       child: ElevatedButton.icon(
-                        onPressed: () async {
-                          HttpsCallable callable = FirebaseFunctions.instance
-                              .httpsCallable('pocReplyAdd');
-                          final results = await callable(tweetContent);
-                          Navigator.of(context).pop(results);
-                          showTopFlushbarFromActivity(
-                              "返信", "アクティビティに返信しました。", context);
-                        },
+                        onPressed: _isDisabledReply
+                            ? null
+                            : () async {
+                                // ボタンを無効にする
+                                _isDisabledReply = true;
+
+                                // 返信処理
+                                HttpsCallable callable = FirebaseFunctions
+                                    .instance
+                                    .httpsCallable('pocReplyAdd');
+                                final results = await callable(tweetContent);
+                                ref
+                                    .watch(replyFormTextProvider.notifier)
+                                    .state = '';
+                                Navigator.of(context).pop(results);
+                                showTopFlushbarFromActivity(
+                                    "返信", "アクティビティに返信しました。", context);
+
+                                // ボタンを有効にする
+                                _isDisabledReply = false;
+                              },
                         label: const Text(
                           '投稿する',
                           style: TextStyle(
@@ -119,16 +127,27 @@ class _ReplyFormState extends ConsumerState<ReplyForm> {
                 ]),
 
             //ユーザーアイコンと入力
-            Row(crossAxisAlignment: CrossAxisAlignment.center,
+            Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 /*左揃えにする*/
                 children: <Widget>[
+                  // ユーザーアイコン
                   Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 20, 10),
+                    margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                    width: 32,
+                    height: 32,
+                    //画像を丸型にする
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: CachedNetworkImage(
+                          imageUrl: ref.watch(ownUserPhotoUriProvider),
+                          fit: BoxFit.fill),
+                    ),
                   ),
                   Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 0, 10),
+                    margin: const EdgeInsets.fromLTRB(5, 8, 0, 10),
                     child: Text(
-                      widget.username,
+                      ref.watch(ownUserNameProvider),
                       style: const TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
@@ -160,6 +179,7 @@ class _ReplyFormState extends ConsumerState<ReplyForm> {
                 ),
                 onChanged: (String value) {
                   tweetContent['value'] = value;
+                  ref.watch(replyFormTextProvider.notifier).state = value;
                 },
               ),
             ),
