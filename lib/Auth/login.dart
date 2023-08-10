@@ -50,6 +50,12 @@ class LoginForm extends ConsumerWidget {
     final email = ref.watch(emailProvider);
     final passwordStateController = ref.watch(passwordProvider.notifier);
     final password = ref.watch(passwordProvider);
+    final firestore = ref.read(firebaseFirestoreProvider);
+
+    //final testtext = ref.watch(userProvider);
+
+    //print("testtext = $testtext");
+
     return Column(
       children: <Widget>[
         TextFormField(
@@ -123,14 +129,52 @@ class LoginForm extends ConsumerWidget {
               email,
               password,
             );
+
             if (result == FirebaseAuthResultStatus.Successful) {
-              // ログイン成功
-              // タイムライン画面に遷移＋ログイン画面を破棄
-              await Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) {
-                  return const Home();
-                }),
-              );
+              // 認証成功
+
+              //firestoreからtempUserListを作成
+              var userDocumentSnapShot = await firestore
+                  .collection("Organization")
+                  .doc("IXtqjP5JvAM2mdj0cntd")
+                  .collection("space")
+                  .doc("nDqwJANhr1evjCBu5Ije")
+                  .collection("Person")
+                  .get();
+              List<dynamic> tempUserList = [];
+              userDocumentSnapShot.docs.forEach((doc) {
+                Map<String, dynamic> userInfo = {
+                  "id": doc.id,
+                };
+                userInfo.addAll(doc.data());
+                tempUserList.add(userInfo);
+              });
+              //tempUserListにログイン時に入力されたメールアドレスが含まれるか確認する
+              final emailExists = "$tempUserList".contains("$email");
+              if (emailExists) {
+                //tempUserListにメールアドレスが存在する場合
+                // タイムライン画面に遷移＋ログイン画面を破棄
+                await Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) {
+                    return const Home();
+                  }),
+                );
+              } else {
+                //tempUserListにメールアドレスが存在しない場合
+                //ログイン失敗
+                final errorMessage = "権限がありません";
+                Flushbar(
+                    title: "失敗しました",
+                    message: "ログインに失敗しました：$errorMessage",
+                    backgroundColor: Colors.redAccent,
+                    margin: const EdgeInsets.all(8),
+                    borderRadius: BorderRadius.circular(8),
+                    duration: const Duration(seconds: 4),
+                    icon: const Icon(
+                      Icons.info_outline,
+                      color: Colors.black,
+                    )).show(context);
+              }
             } else {
               final errorMessage = exceptionMessage(result);
               // ログイン失敗

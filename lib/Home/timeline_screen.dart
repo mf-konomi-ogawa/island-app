@@ -39,10 +39,12 @@ class TimelineScreen extends ConsumerWidget {
         .get();
     List<dynamic> tempUserList = [];
     userDocumentSnapShot.docs.forEach((doc) {
-      Map<String, dynamic> userInfo = {"id": doc.id};
+      Map<String, dynamic> userInfo = {"id": doc.id,};
       userInfo.addAll(doc.data());
       tempUserList.add(userInfo);
-    });
+    }
+
+    );
 
     // 自身のユーザー情報を取得
     var usernameDocumentSnapShot = await firestore

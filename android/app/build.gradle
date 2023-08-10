@@ -48,10 +48,11 @@ android {
         applicationId "com.island_develop.apikicker"
         minSdkVersion 21
         targetSdkVersion 30
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
-
+\
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
