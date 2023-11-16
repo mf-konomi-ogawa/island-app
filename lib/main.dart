@@ -9,6 +9,7 @@ import 'Provider/user_provider.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:apikicker/Home/home.dart';
+import 'package:apikicker/Home/onboarding.dart';
 import 'package:timeago/timeago.dart' as timeAgo;
 import 'package:apikicker/Home/timeline_screen.dart';
 import 'package:camera/camera.dart';
@@ -110,12 +111,11 @@ class MyApp extends StatelessWidget {
               // TODO : スプラッシュ画面にする
               return const SizedBox();
             }
-            if (snapshot.hasData) {
-              // User が null ではない、つまりサインイン済みのホーム画面へ
-              return const Home();
-            }
             // User が null である、つまり未サインインのサインイン画面へ
-            return const WelcomePage();
+            //return const WelcomePage();
+
+            //いったんオンボーディング画面に飛ぶように（修正必要）
+            return const Onboarding();
           },
         ),
       );

@@ -46,6 +46,8 @@ dependencies:
 
   uuid: ^3.0.7
 
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -62,6 +64,7 @@ flutter:
     - images/splash/
     - images/button/
     - images/app_icon/
+    - images/onboarding/
 
 flutter_native_splash:
   image: "images/splash/splash_island_logo.png"
